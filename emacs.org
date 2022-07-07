@@ -1,0 +1,33 @@
+#+title Emacs Configuration New 
+
+#+PROPERTY: header-args:emacs-lisp :tangle ./init.el
+
+* Help
+** Tangle file
+org-babel-tangle
+** Create block templates
+<el<tab> (ensure that you don't have a closing tag [>] at the end of template block)
+
+* Install
+** Copy Straight.el boostrap script below and paste into init.el
+** Open emacs and Straight will install
+** Open emacs.org and M-x org-babel-tangle
+
+* Initialization
+** Straight.el
+
+#+begin_src emacs-lisp
+(defvar bootstrap-version)
+(let ((bootstrap-file
+       (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
+      (bootstrap-version 5))
+  (unless (file-exists-p bootstrap-file)
+    (with-current-buffer
+        (url-retrieve-synchronously
+         "https://raw.githubusercontent.com/raxod502/straight.el/develop/install.el"
+         'silent 'inhibit-cookies)
+      (goto-char (point-max))
+      (eval-print-last-sexp)))
+  (load bootstrap-file nil 'nomessage))
+#+end_src
+
