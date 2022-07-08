@@ -31,3 +31,34 @@ org-babel-tangle
   (load bootstrap-file nil 'nomessage))
 #+end_src
 
+* Editor
+** Avy
+** Multiple cursors
+** Evil
+** General
+
+* Navigation
+** Helm
+** Perspective
+** Vertico & Orderless
+** Projectile
+
+* Languages
+
+* Applications
+** Org Mode
+** Magit
+** Terminal
+** Rest Client
+
+* IDE
+** LSP
+** Flycheck
+** Eslint
+
+* Appearance
+
+* Customizations
+** Appearance
+** Keybindings
+** Interactions
