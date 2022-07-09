@@ -24,6 +24,10 @@
 
 (setq create-lockfiles nil)
 
+(straight-use-package 'helm)
+(require 'helm)
+(helm-mode 1)
+
 (straight-use-package 'org)
 (require 'org)
 

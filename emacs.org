@@ -75,6 +75,14 @@ indent-region
 
 * Navigation
 ** Helm
+*** Install
+#+begin_src emacs-lisp
+(straight-use-package 'helm)
+(require 'helm)
+(helm-mode 1)
+#+end_src
+
+ 
 ** Perspective
 ** Vertico & Orderless
 ** Projectile
@@ -83,6 +91,7 @@ indent-region
 
 * Applications
 ** Org Mode
+*** Install
 #+begin_src emacs-lisp
 (straight-use-package 'org)
 (require 'org)
@@ -201,3 +210,10 @@ Nano requires you to import the desired theme and after to call the function nan
 ** Melpa (24)
 ** exec-path-from-shell-initialize (61)
 ** Org-mode auto-tangle (319)
+** Copy full path to kill ring (454)
+** Helm
+*** Helm Projectile (517)
+*** Helm kill ring (548)
+*** Helm style customization (551)
+*** Helm show only basename (565)
+*** Helm hide modeline (569)
