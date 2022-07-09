@@ -28,6 +28,13 @@
 (require 'helm)
 (helm-mode 1)
 
+(require 'projectile)
+(projectile-global-mode) ;; This caches the files!
+
+(setq projectile-enable-caching t)
+
+(setq projectile-track-known-projects-automatically nil)
+
 (straight-use-package 'org)
 (require 'org)
 

@@ -81,11 +81,28 @@ indent-region
 (require 'helm)
 (helm-mode 1)
 #+end_src
-
  
+** Projectile
+
+*** Install
+#+begin_src emacs-lisp
+(require 'projectile)
+(projectile-global-mode) ;; This caches the files!
+#+end_src
+
+*** Caching
+#+begin_src emacs-lisp
+(setq projectile-enable-caching t)
+#+end_src
+
+*** Don't track projects automatically
+#+begin_src emacs-lisp
+(setq projectile-track-known-projects-automatically nil)
+#+end_src
+
+
 ** Perspective
 ** Vertico & Orderless
-** Projectile
 
 * Languages
 
@@ -217,3 +234,4 @@ Nano requires you to import the desired theme and after to call the function nan
 *** Helm style customization (551)
 *** Helm show only basename (565)
 *** Helm hide modeline (569)
+*** Set projectile-add-known-project (610)
