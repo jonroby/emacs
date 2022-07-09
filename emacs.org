@@ -88,7 +88,13 @@ Can evil handle this?
 #+begin_src emacs-lisp
 ;; (drag-stuff-global-mode 1)
 #+end_src
-** Multiple cursors
+
+** Multiple cursors (multi-edit)
+#+begin_src emacs-lisp
+(straight-use-package 'evil-multiedit)
+(require 'evil-multiedit)
+(evil-multiedit-default-keybinds)
+#+end_src
 
 * Navigation
 ** Helm
@@ -260,3 +266,14 @@ Nano requires you to import the desired theme and after to call the function nan
 ** Snippets (639)
 ** Avy global keys (658)
 ** Avy styling (665)
+** Company styling (675)
+** LSP (721)
+** Typescript (801)
+** Web mode (812)
+** Magit (824)
+** Flycheck (1142)
+** Languages (1242)
+** Hosts file (1391)
+** Vterm (1414, 1434)
+** Buffer command? (1480)
+** Perspective (1489)

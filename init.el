@@ -33,6 +33,10 @@
 
 ;; (drag-stuff-global-mode 1)
 
+(straight-use-package 'evil-multiedit)
+(require 'evil-multiedit)
+(evil-multiedit-default-keybinds)
+
 (straight-use-package 'helm)
 (require 'helm)
 (helm-mode 1)
