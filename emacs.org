@@ -110,7 +110,7 @@ TODO Use Straight to import
                     :family "SF Mono"
                     :height 130
                     :weight 'normal
-                    :width 'normal))
+                    :width 'normal)
 #+end_src
 
 ** Title Bar

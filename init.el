@@ -37,7 +37,7 @@
                     :family "SF Mono"
                     :height 130
                     :weight 'normal
-                    :width 'normal))
+                    :width 'normal)
 
 (add-to-list 'default-frame-alist '(ns-transparent-titlebar . t))
 
