@@ -1,6 +1,8 @@
-#+title Emacs Configuration New 
+#+title Emacs Configuration New
 
 #+PROPERTY: header-args:emacs-lisp :tangle ./init.el
+
+Up To: Line 303
 
 * Help
 ** Tangle file
@@ -31,6 +33,34 @@ org-babel-tangle
   (load bootstrap-file nil 'nomessage))
 #+end_src
 
+* Defaults
+
+** Remove two spaces when running emacs auto-indent in org-mode blocks
+#+begin_src emacs-lisp
+(setq org-src-preserve-indentation t)
+#+end_src
+
+** Turn off annoying bell sound
+#+begin_src emacs-lisp
+(setq ring-bell-function 'ignore)
+#+end_src
+
+** Don't auto save
+#+begin_src emacs-lisp
+(setq auto-save-default nil)
+#+end_src
+
+** Don't create back up files
+#+begin_src emacs-lisp
+(setq make-backup-files nil)
+#+end_src
+
+** Don't create lock files
+#+begin_src emacs-lisp
+(setq create-lockfiles nil)
+#+end_src
+
+
 * Editor
 ** Avy
 ** Multiple cursors
@@ -57,8 +87,49 @@ org-babel-tangle
 ** Eslint
 
 * Appearance
+** Nano
+TODO Use Straight to import
+#+begin_src emacs-lisp
+(straight-use-package
+  '(nano-emacs :type git :host github :repo "rougier/nano-emacs"))
+
+(require 'nano)
+(require 'nano-theme-dark)
+
+(require 'nano-faces)
+(nano-faces)
+
+(require 'nano-theme)
+(nano-theme)
+#+end_src
+
+** Font
+*** Font family
+#+begin_src emacs-lisp
+(set-face-attribute 'default nil
+                    :family "SF Mono"
+                    :height 130
+                    :weight 'normal
+                    :width 'normal))
+#+end_src
+
+** Title Bar
+*** Make title bar same color as background
+#+begin_src emacs-lisp
+(add-to-list 'default-frame-alist '(ns-transparent-titlebar . t))
+#+end_src
+
+** Line Spacing
+#+begin_src emacs-lisp
+(setq-default line-spacing 2)
+#+end_src
 
 * Customizations
 ** Appearance
 ** Keybindings
 ** Interactions
+
+
+* TODO Later
+** Melpa (24)
+** exec-path-from-shell-initialize (61)
