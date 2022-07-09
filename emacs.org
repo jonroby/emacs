@@ -68,10 +68,27 @@ indent-region
 
 
 * Editor
-** Avy
-** Multiple cursors
 ** Evil
-** General
+*** Install
+#+begin_src emacs-lisp
+(straight-use-package 'evil)
+(require 'evil)
+(evil-mode 1)
+#+end_src
+
+** TODO Avy
+This doesn't work atm.
+#+begin_src emacs-lisp
+;; (straight-use-package 'avy)
+;; (avy-setup-default)
+#+end_src
+
+** TODO Drag Text
+Can evil handle this?
+#+begin_src emacs-lisp
+;; (drag-stuff-global-mode 1)
+#+end_src
+** Multiple cursors
 
 * Navigation
 ** Helm
@@ -86,8 +103,10 @@ indent-region
 
 *** Install
 #+begin_src emacs-lisp
+(straight-use-package 'projectile)
 (require 'projectile)
-(projectile-global-mode) ;; This caches the files!
+
+(projectile-global-mode)
 #+end_src
 
 *** Caching
@@ -100,6 +119,7 @@ indent-region
 (setq projectile-track-known-projects-automatically nil)
 #+end_src
 
+** Company
 
 ** Perspective
 ** Vertico & Orderless
@@ -220,6 +240,7 @@ Nano requires you to import the desired theme and after to call the function nan
 * Customizations
 ** Appearance
 ** Keybindings
+*** General
 ** Interactions
 
 
@@ -235,3 +256,7 @@ Nano requires you to import the desired theme and after to call the function nan
 *** Helm show only basename (565)
 *** Helm hide modeline (569)
 *** Set projectile-add-known-project (610)
+*** Set drag-stuff command keys (634)
+** Snippets (639)
+** Avy global keys (658)
+** Avy styling (665)

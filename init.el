@@ -24,12 +24,23 @@
 
 (setq create-lockfiles nil)
 
+(straight-use-package 'evil)
+(require 'evil)
+(evil-mode 1)
+
+;; (straight-use-package 'avy)
+;; (avy-setup-default)
+
+;; (drag-stuff-global-mode 1)
+
 (straight-use-package 'helm)
 (require 'helm)
 (helm-mode 1)
 
+(straight-use-package 'projectile)
 (require 'projectile)
-(projectile-global-mode) ;; This caches the files!
+
+(projectile-global-mode)
 
 (setq projectile-enable-caching t)
 
