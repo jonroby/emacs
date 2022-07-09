@@ -1,3 +1,5 @@
+(setq package-enable-at-startup nil)
+
 (defvar bootstrap-version)
 (let ((bootstrap-file
        (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
@@ -11,7 +13,8 @@
       (eval-print-last-sexp)))
   (load bootstrap-file nil 'nomessage))
 
-(setq org-src-preserve-indentation t)
+;; TODO Temporary  
+(global-set-key (kbd "C-c e") (lambda () (interactive) (find-file "~/.emacs.d/emacs.org")))
 
 (setq ring-bell-function 'ignore)
 
@@ -20,6 +23,34 @@
 (setq make-backup-files nil)
 
 (setq create-lockfiles nil)
+
+(straight-use-package 'org)
+(require 'org)
+
+(setq org-agenda-files (directory-files-recursively "~/.emacs.d/org" "\.org$"))
+
+(setq org-src-preserve-indentation t)
+
+(require 'org-tempo)
+
+(add-to-list 'org-structure-template-alist '("el" . "src emacs-lisp"))
+
+(setq org-src-tab-acts-natively nil)
+
+(org-indent-mode)
+(visual-line-mode 1)
+
+(require 'color)
+(set-face-attribute 'org-block nil :background
+                    (color-darken-name
+                     (face-attribute 'default :background) 3))
+
+(setq org-ellipsis " ▾")
+
+(straight-use-package 'org-bullets)
+(require 'org-bullets)
+
+(add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
 
 (straight-use-package
   '(nano-emacs :type git :host github :repo "rougier/nano-emacs"))

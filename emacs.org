@@ -2,20 +2,29 @@
 
 #+PROPERTY: header-args:emacs-lisp :tangle ./init.el
 
-Up To: Line 303
+Up To: Line 450
 
 * Help
 ** Tangle file
 org-babel-tangle
 ** Create block templates
 <el<tab> (ensure that you don't have a closing tag [>] at the end of template block)
+** To delete indentation in blocks
+delete-horizontal-white space
+** Autoformat
+indent-region
 
 * Install
-** Copy Straight.el boostrap script below and paste into init.el
+** Copy Straight.el bootstrap script below and paste into init.el
 ** Open emacs and Straight will install
 ** Open emacs.org and M-x org-babel-tangle
 
 * Initialization
+** Disable package.el from loading packages
+#+begin_src emacs-lisp
+(setq package-enable-at-startup nil)
+#+end_src
+
 ** Straight.el
 
 #+begin_src emacs-lisp
@@ -31,15 +40,12 @@ org-babel-tangle
       (goto-char (point-max))
       (eval-print-last-sexp)))
   (load bootstrap-file nil 'nomessage))
+
+;; TODO Temporary  
+(global-set-key (kbd "C-c e") (lambda () (interactive) (find-file "~/.emacs.d/emacs.org")))
 #+end_src
 
 * Defaults
-
-** Remove two spaces when running emacs auto-indent in org-mode blocks
-#+begin_src emacs-lisp
-(setq org-src-preserve-indentation t)
-#+end_src
-
 ** Turn off annoying bell sound
 #+begin_src emacs-lisp
 (setq ring-bell-function 'ignore)
@@ -77,6 +83,67 @@ org-babel-tangle
 
 * Applications
 ** Org Mode
+#+begin_src emacs-lisp
+(straight-use-package 'org)
+(require 'org)
+#+end_src
+
+*** Org agenda files
+#+begin_src emacs-lisp
+(setq org-agenda-files (directory-files-recursively "~/.emacs.d/org" "\.org$"))
+#+end_src
+
+*** Remove two spaces that are inserted when running emacs auto-indent in org-mode blocks
+#+begin_src emacs-lisp
+(setq org-src-preserve-indentation t)
+#+end_src
+
+*** Template blocks shortcut (el)
+Org-tempo comes with org, so no need to install
+#+begin_src emacs-lisp
+(require 'org-tempo)
+
+(add-to-list 'org-structure-template-alist '("el" . "src emacs-lisp"))
+#+end_src
+
+*** Fix <return> bug
+Pressing return causes the entire block to indent. This fixes issue.
+#+begin_src emacs-lisp
+(setq org-src-tab-acts-natively nil)
+#+end_src
+
+*** TODO Org indent mode
+This doesn't work atm.
+#+begin_src emacs-lisp
+(org-indent-mode)
+(visual-line-mode 1)
+#+end_src
+
+*** Appearance
+**** TODO Org background color
+This doesn't work atm.
+#+begin_src emacs-lisp
+(require 'color)
+(set-face-attribute 'org-block nil :background
+                    (color-darken-name
+                     (face-attribute 'default :background) 3))
+#+end_src
+
+**** Set ellipsis to down arrow
+#+begin_src emacs-lisp
+(setq org-ellipsis " ▾")
+#+end_src
+
+**** Org bullets
+#+begin_src emacs-lisp
+(straight-use-package 'org-bullets)
+(require 'org-bullets)
+
+(add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
+#+end_src
+
+
+
 ** Magit
 ** Terminal
 ** Rest Client
@@ -88,7 +155,7 @@ org-babel-tangle
 
 * Appearance
 ** Nano
-TODO Use Straight to import
+Nano requires you to import the desired theme and after to call the function nano-faces and nano-theme.
 #+begin_src emacs-lisp
 (straight-use-package
   '(nano-emacs :type git :host github :repo "rougier/nano-emacs"))
@@ -133,3 +200,4 @@ TODO Use Straight to import
 * TODO Later
 ** Melpa (24)
 ** exec-path-from-shell-initialize (61)
+** Org-mode auto-tangle (319)
