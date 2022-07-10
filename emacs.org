@@ -42,7 +42,7 @@ indent-region
   (load bootstrap-file nil 'nomessage))
 
 ;; TODO Temporary
-(global-set-key (kbd "C-c e") (lambda () (interactive) (find-file "~/.emacs.d/emacs.org")))
+(global-set-key (kbd "C-c e") (lambda () (interactive) (find-file "~/.emacs.d/init.org")))
 #+end_src
 
 * Defaults
@@ -76,16 +76,19 @@ indent-region
 (evil-mode 1)
 #+end_src
 
-** TODO Avy
+** Avy
 This doesn't work atm.
 #+begin_src emacs-lisp
-;; (straight-use-package 'avy)
-;; (avy-setup-default)
+(straight-use-package 'avy)
+(avy-setup-default)
 #+end_src
 
-** TODO Drag Text
-Can evil handle this?
+** Drag Text
+TODO: Can evil handle this?
 #+begin_src emacs-lisp
+(straight-use-package 'drag-stuff)
+(require 'drag-stuff)
+
 ;; (drag-stuff-global-mode 1)
 #+end_src
 
@@ -140,6 +143,27 @@ For keybindings, navigate to Keybindings section
 ** Vertico & Orderless
 
 * Languages
+** Typescript (Javascript)
+#+begin_src emacs-lisp
+(use-package typescript-mode
+  :mode (
+         ("\\.js\\'"  . typescript-mode)
+         ("\\.jsx\\'" . typescript-mode)
+         ("\\.ts\\'"  . typescript-mode)
+         ("\\.ts\\'"  . typescript-mode) ("\\.tsx\\'" . typescript-mode))
+
+  :config
+  (setq typescript-indent-level 2))
+#+end_src
+
+** HTML
+#+begin_src emacs-lisp
+(use-package web-mode
+  :ensure t
+  :mode (
+         ("\\.html\\'" . web-mode))
+  :commands web-mode)
+#+end_src
 
 * Applications
 ** Org Mode
@@ -207,6 +231,16 @@ This doesn't work atm.
 
 ** Magit
 ** Terminal
+*** Vterm
+#+begin_src emacs-lisp
+(straight-use-package 'vterm)
+#+end_src
+
+*** Multi Vterm
+#+begin_src emacs-lisp
+(straight-use-package 'multi-vterm)
+#+end_src
+
 ** Rest Client
 
 * IDE
@@ -254,7 +288,17 @@ Nano requires you to import the desired theme and after to call the function nan
 
 * Customizations
 ** Appearance
-** General Keybindings
+
+* Layers
+** Helm Projectile
+#+begin_src emacs-lisp
+(straight-use-package 'helm-projectile)
+(require 'helm-projectile)
+(helm-projectile-on)
+#+end_src
+
+* Keybindings
+** General 
 *** LSP
 #+begin_src emacs-lisp
 (general-create-definer lsp-leader-def
@@ -291,6 +335,7 @@ Nano requires you to import the desired theme and after to call the function nan
 
 (buffer-leader-def
  :states 'normal
+ "a" 'save-buffer
  "j" 'previous-buffer
  "k" 'next-buffer
  "l" 'switch-to-last-buffer
@@ -327,7 +372,7 @@ Nano requires you to import the desired theme and after to call the function nan
  )
 #+end_src
 
-***  Perspective
+*** Perspective
 #+begin_src emacs-lisp
 (general-create-definer emacs-leader-def
   :prefix "SPC v")
@@ -362,13 +407,12 @@ Nano requires you to import the desired theme and after to call the function nan
   )
 #+end_src
 
-** Evil Keybindings
+** Evil
 *** Global
 #+begin_src emacs-lisp
 (evil-define-key '(normal visual) 'global (kbd ",") 'evil-scroll-down)
 (evil-define-key '(normal visual) 'global (kbd ".") 'evil-scroll-up)
 
-(evil-define-key '(normal) 'global (kbd "TAB") 'avy-goto-word-1)
 (evil-define-key '(normal) 'global (kbd "<DEL>") 'delete-backward-char)
 (evil-define-key '(normal) 'global (kbd "M-n") 'drag-stuff-down)
 (evil-define-key '(normal) 'global (kbd "M-p") 'drag-stuff-up)
@@ -404,33 +448,46 @@ Vim doesn't use eol like emacs. However, with emacs you will want to evaluate fu
 (define-key evil-motion-state-map "f" 'avy-goto-word-1)
 #+end_src
 
-** Interactions
+
+** Emacs
+*** Copy full path to kill ring
+#+begin_src emacs-lisp
+(defun copy-full-path-to-kill-ring ()
+  "copy buffer's full path to kill ring"
+  (interactive)
+  (when buffer-file-name
+    (kill-new (file-truename buffer-file-name))))
+
+(global-set-key (kbd "C-c y") 'copy-full-path-to-kill-ring)
+#+end_src
+
+
+* Miscellaneous
+** Open hosts without having to change permissions
+#+begin_src emacs-lisp
+(defun hosts ()
+  "Open /etc/hosts as root."
+  (interactive)
+  (find-file "/sudo::/etc/hosts"))
+#+end_src
 
 * TODO Later
 ** Melpa (24)
 ** exec-path-from-shell-initialize (61)
-** Org-mode auto-tangle (319)
-** Copy full path to kill ring (454)
 ** Helm
-*** Helm Projectile (517)
+*** Helm buffer
 *** Helm kill ring (548)
 *** Helm style customization (551)
 *** Helm show only basename (565)
 *** Helm hide modeline (569)
-*** Set projectile-add-known-project (610)
-*** Set drag-stuff command keys (634)
 ** Snippets (639)
-** Avy global keys (658)
 ** Avy styling (665)
 ** Company styling (675)
 ** LSP (721)
-** Typescript (801)
-** Web mode (812)
+** [4] Web mode (812)
 ** Magit (824)
 ** Flycheck (1142)
 ** Languages (1242)
-** Hosts file (1391)
-** Vterm (1414, 1434)
 ** Buffer command? (1480)
 ** Perspective (1489)
 ** Escape? (1586)

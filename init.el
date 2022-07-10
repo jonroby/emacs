@@ -14,7 +14,7 @@
   (load bootstrap-file nil 'nomessage))
 
 ;; TODO Temporary
-(global-set-key (kbd "C-c e") (lambda () (interactive) (find-file "~/.emacs.d/emacs.org")))
+(global-set-key (kbd "C-c e") (lambda () (interactive) (find-file "~/.emacs.d/init.org")))
 
 (setq ring-bell-function 'ignore)
 
@@ -28,8 +28,11 @@
 (require 'evil)
 (evil-mode 1)
 
-;; (straight-use-package 'avy)
-;; (avy-setup-default)
+(straight-use-package 'avy)
+(avy-setup-default)
+
+(straight-use-package 'drag-stuff)
+(require 'drag-stuff)
 
 ;; (drag-stuff-global-mode 1)
 
@@ -54,6 +57,22 @@
 (setq projectile-enable-caching t)
 
 (setq projectile-track-known-projects-automatically nil)
+
+(use-package typescript-mode
+  :mode (
+         ("\\.js\\'"  . typescript-mode)
+         ("\\.jsx\\'" . typescript-mode)
+         ("\\.ts\\'"  . typescript-mode)
+         ("\\.ts\\'"  . typescript-mode) ("\\.tsx\\'" . typescript-mode))
+
+  :config
+  (setq typescript-indent-level 2))
+
+(use-package web-mode
+  :ensure t
+  :mode (
+         ("\\.html\\'" . web-mode))
+  :commands web-mode)
 
 (straight-use-package 'org)
 (require 'org)
@@ -83,6 +102,10 @@
 
 (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
 
+(straight-use-package 'vterm)
+
+(straight-use-package 'multi-vterm)
+
 (straight-use-package
   '(nano-emacs :type git :host github :repo "rougier/nano-emacs"))
 
@@ -104,6 +127,10 @@
 (add-to-list 'default-frame-alist '(ns-transparent-titlebar . t))
 
 (setq-default line-spacing 2)
+
+(straight-use-package 'helm-projectile)
+(require 'helm-projectile)
+(helm-projectile-on)
 
 (general-create-definer lsp-leader-def
   :prefix "SPC l")
@@ -133,6 +160,7 @@
 
 (buffer-leader-def
  :states 'normal
+ "a" 'save-buffer
  "j" 'previous-buffer
  "k" 'next-buffer
  "l" 'switch-to-last-buffer
@@ -194,7 +222,6 @@
 (evil-define-key '(normal visual) 'global (kbd ",") 'evil-scroll-down)
 (evil-define-key '(normal visual) 'global (kbd ".") 'evil-scroll-up)
 
-(evil-define-key '(normal) 'global (kbd "TAB") 'avy-goto-word-1)
 (evil-define-key '(normal) 'global (kbd "<DEL>") 'delete-backward-char)
 (evil-define-key '(normal) 'global (kbd "M-n") 'drag-stuff-down)
 (evil-define-key '(normal) 'global (kbd "M-p") 'drag-stuff-up)
@@ -217,3 +244,16 @@
 (define-key evil-motion-state-map "1" 'evil-first-non-blank-of-visual-line)
 (define-key evil-motion-state-map "9" 'other-window)
 (define-key evil-motion-state-map "f" 'avy-goto-word-1)
+
+(defun copy-full-path-to-kill-ring ()
+  "copy buffer's full path to kill ring"
+  (interactive)
+  (when buffer-file-name
+    (kill-new (file-truename buffer-file-name))))
+
+(global-set-key (kbd "C-c y") 'copy-full-path-to-kill-ring)
+
+(defun hosts ()
+  "Open /etc/hosts as root."
+  (interactive)
+  (find-file "/sudo::/etc/hosts"))
