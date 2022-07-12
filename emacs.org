@@ -143,27 +143,6 @@ For keybindings, navigate to Keybindings section
 ** Vertico & Orderless
 
 * Languages
-** Typescript (Javascript)
-#+begin_src emacs-lisp
-(use-package typescript-mode
-  :mode (
-         ("\\.js\\'"  . typescript-mode)
-         ("\\.jsx\\'" . typescript-mode)
-         ("\\.ts\\'"  . typescript-mode)
-         ("\\.ts\\'"  . typescript-mode) ("\\.tsx\\'" . typescript-mode))
-
-  :config
-  (setq typescript-indent-level 2))
-#+end_src
-
-** HTML
-#+begin_src emacs-lisp
-(use-package web-mode
-  :ensure t
-  :mode (
-         ("\\.html\\'" . web-mode))
-  :commands web-mode)
-#+end_src
 
 * Applications
 ** Org Mode
@@ -330,6 +309,10 @@ Nano requires you to import the desired theme and after to call the function nan
 
 *** Buffer
 #+begin_src emacs-lisp
+(defun switch-to-last-buffer ()
+  (interactive)
+  (switch-to-buffer nil))
+
 (general-create-definer buffer-leader-def
   :prefix "SPC b")
 
@@ -366,7 +349,8 @@ Nano requires you to import the desired theme and after to call the function nan
 (emacs-leader-def
  :states 'normal
  "q" 'save-buffers-kill-terminal
- "e" 'execute-extended-command
+ "e" 'helm-M-x
+ "y" 'helm-show-kill-ring
  "r" 'eval-last-sexp
  "i" '(lambda () (interactive) (find-file "~/.emacs.d/emacs.org"))
  )
@@ -452,11 +436,7 @@ Vim doesn't use eol like emacs. However, with emacs you will want to evaluate fu
 ** Emacs
 *** Copy full path to kill ring
 #+begin_src emacs-lisp
-(defun copy-full-path-to-kill-ring ()
-  "copy buffer's full path to kill ring"
-  (interactive)
-  (when buffer-file-name
-    (kill-new (file-truename buffer-file-name))))
+
 
 (global-set-key (kbd "C-c y") 'copy-full-path-to-kill-ring)
 #+end_src
@@ -471,24 +451,27 @@ Vim doesn't use eol like emacs. However, with emacs you will want to evaluate fu
   (find-file "/sudo::/etc/hosts"))
 #+end_src
 
+** Capslock key escapes
+#+begin_src emacs-lisp
+(define-key key-translation-map (kbd "ESC") (kbd "C-g"))
+#+end_src
+
 * TODO Later
 ** Melpa (24)
-** exec-path-from-shell-initialize (61)
 ** Helm
-*** Helm buffer
-*** Helm kill ring (548)
+*** Helm M-x buffer (style)
+*** Helm show kill ring (style)
 *** Helm style customization (551)
 *** Helm show only basename (565)
 *** Helm hide modeline (569)
 ** Snippets (639)
 ** Avy styling (665)
 ** Company styling (675)
-** LSP (721)
-** [4] Web mode (812)
-** Magit (824)
-** Flycheck (1142)
-** Languages (1242)
-** Buffer command? (1480)
-** Perspective (1489)
-** Escape? (1586)
+** [1] LSP (721)
+** [6] Web mode (812)
+** [4] Magit (824)
+** [2] Flycheck (1142)
+** [5] Languages (1242)
+** [3] Perspective (1489)
 ** Custom colors (1790)
+

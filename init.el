@@ -58,22 +58,6 @@
 
 (setq projectile-track-known-projects-automatically nil)
 
-(use-package typescript-mode
-  :mode (
-         ("\\.js\\'"  . typescript-mode)
-         ("\\.jsx\\'" . typescript-mode)
-         ("\\.ts\\'"  . typescript-mode)
-         ("\\.ts\\'"  . typescript-mode) ("\\.tsx\\'" . typescript-mode))
-
-  :config
-  (setq typescript-indent-level 2))
-
-(use-package web-mode
-  :ensure t
-  :mode (
-         ("\\.html\\'" . web-mode))
-  :commands web-mode)
-
 (straight-use-package 'org)
 (require 'org)
 
@@ -155,6 +139,10 @@
  "d" 'delete-window
  )
 
+(defun switch-to-last-buffer ()
+  (interactive)
+  (switch-to-buffer nil))
+
 (general-create-definer buffer-leader-def
   :prefix "SPC b")
 
@@ -185,7 +173,8 @@
 (emacs-leader-def
  :states 'normal
  "q" 'save-buffers-kill-terminal
- "e" 'execute-extended-command
+ "e" 'helm-M-x
+ "y" 'helm-show-kill-ring
  "r" 'eval-last-sexp
  "i" '(lambda () (interactive) (find-file "~/.emacs.d/emacs.org"))
  )
@@ -245,15 +234,11 @@
 (define-key evil-motion-state-map "9" 'other-window)
 (define-key evil-motion-state-map "f" 'avy-goto-word-1)
 
-(defun copy-full-path-to-kill-ring ()
-  "copy buffer's full path to kill ring"
-  (interactive)
-  (when buffer-file-name
-    (kill-new (file-truename buffer-file-name))))
-
 (global-set-key (kbd "C-c y") 'copy-full-path-to-kill-ring)
 
 (defun hosts ()
   "Open /etc/hosts as root."
   (interactive)
   (find-file "/sudo::/etc/hosts"))
+
+(define-key key-translation-map (kbd "ESC") (kbd "C-g"))
