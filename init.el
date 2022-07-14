@@ -49,6 +49,8 @@
 (require 'helm)
 (helm-mode 1)
 
+(straight-use-package 'helm-swoop)
+
 (straight-use-package 'projectile)
 (require 'projectile)
 
@@ -57,6 +59,11 @@
 (setq projectile-enable-caching t)
 
 (setq projectile-track-known-projects-automatically nil)
+
+;; (straight-use-package 'treemacs)
+
+(straight-use-package 'typescript-mode)
+(add-to-list 'auto-mode-alist '("\\.tsx\\'" . typescript-mode))
 
 (straight-use-package 'org)
 (require 'org)
@@ -90,6 +97,24 @@
 
 (straight-use-package 'multi-vterm)
 
+(straight-use-package 'lsp-mode)
+(straight-use-package 'lsp-ui)
+(straight-use-package 'helm-lsp)
+(straight-use-package 'lsp-treemacs)
+
+(straight-use-package 'company)
+
+(setq gc-cons-threshold (* 100 1024 1024)
+        read-process-output-max (* 1024 1024)
+        company-idle-delay 0.0
+        company-minimum-prefix-length 1
+        create-lockfiles nil) ;; lock files will kill `npm start'
+
+(with-eval-after-load 'lsp-mode
+    (setq lsp-headerline-breadcrumb-enable nil))
+;;    (add-hook 'lsp-mode-hook #'lsp-enable-which-key-integration)
+;;    (yas-global-mode))
+
 (straight-use-package
   '(nano-emacs :type git :host github :repo "rougier/nano-emacs"))
 
@@ -121,9 +146,8 @@
 
 (lsp-leader-def
  :states 'normal
- ;; :keymaps 'org-mode-map
  "l" 'lsp
- "t" 'lsp-go-to-type-definition
+ "t" 'lsp-goto-type-definition
  "r" 'lsp-ui-peek-find-references
  "j" 'lsp-ui-peek-find-definitions
  "k" 'lsp-ui-peek-jump-backward
@@ -235,6 +259,25 @@
 (define-key evil-motion-state-map "f" 'avy-goto-word-1)
 
 (global-set-key (kbd "C-c y") 'copy-full-path-to-kill-ring)
+
+(setq company-idle-delay 0)
+(with-eval-after-load 'company
+  (set-face-attribute 'company-tooltip nil :foreground "#5E81AC" :background "#27c12cf13750")
+  (set-face-attribute 'company-tooltip-annotation nil :foreground "#4C566A" :background "#27c12cf13750")
+  (set-face-attribute 'company-tooltip-annotation-selection nil :foreground "#4C566A" :background "#A3BE8C")
+  (set-face-attribute 'company-tooltip-common-selection nil :foreground "white" :background "#A3BE8C")
+  (set-face-attribute 'company-tooltip-common nil :foreground "#A3BE8C" :background "#27c12cf13750")
+  (set-face-attribute 'company-tooltip-selection nil :foreground "white" :background "#A3BE8C"))
+
+(setq lsp-ui-sideline-diagnostic-max-lines 3)
+(with-eval-after-load 'lsp-ui
+  (set-face-attribute 'lsp-ui-peek-header nil :foreground "white" :background "#3B4252")
+  (set-face-attribute 'lsp-ui-peek-footer nil :foreground "white" :background "#3B4252")
+  (set-face-attribute 'lsp-ui-peek-highlight nil :foreground "#A3BE8C" :background "#27c12cf13750" :box nil)
+  (set-face-attribute 'lsp-ui-peek-peek nil :background "#27c12cf13750") ;; left 
+  (set-face-attribute 'lsp-ui-peek-list nil :background "#27c12cf13750") ;; right
+  (set-face-attribute 'lsp-ui-peek-filename nil :foreground "RosyBrown")
+  (set-face-attribute 'lsp-ui-peek-selection nil :foreground "white" :background "#A3BE8C"))
 
 (defun hosts ()
   "Open /etc/hosts as root."

@@ -117,6 +117,11 @@ For keybindings, navigate to Keybindings section
 (helm-mode 1)
 #+end_src
 
+*** Swoop
+#+begin_src emacs-lisp
+(straight-use-package 'helm-swoop)
+#+end_src
+
 ** Projectile
 
 *** Install
@@ -143,6 +148,16 @@ For keybindings, navigate to Keybindings section
 ** Vertico & Orderless
 
 * Languages
+** Treemacs
+#+begin_src emacs-lisp
+;; (straight-use-package 'treemacs)
+#+end_src
+** Typescript
+#+begin_src emacs-lisp
+(straight-use-package 'typescript-mode)
+(add-to-list 'auto-mode-alist '("\\.tsx\\'" . typescript-mode))
+#+end_src
+
 
 * Applications
 ** Org Mode
@@ -224,6 +239,30 @@ This doesn't work atm.
 
 * IDE
 ** LSP
+#+begin_src emacs-lisp
+(straight-use-package 'lsp-mode)
+(straight-use-package 'lsp-ui)
+(straight-use-package 'helm-lsp)
+(straight-use-package 'lsp-treemacs)
+#+end_src
+*** Company
+#+begin_src emacs-lisp
+(straight-use-package 'company)
+
+(setq gc-cons-threshold (* 100 1024 1024)
+        read-process-output-max (* 1024 1024)
+        company-idle-delay 0.0
+        company-minimum-prefix-length 1
+        create-lockfiles nil) ;; lock files will kill `npm start'
+#+end_src
+
+*** Customizations
+#+begin_src emacs-lisp
+(with-eval-after-load 'lsp-mode
+    (setq lsp-headerline-breadcrumb-enable nil))
+;;    (add-hook 'lsp-mode-hook #'lsp-enable-which-key-integration)
+;;    (yas-global-mode))
+#+end_src
 ** Flycheck
 ** Eslint
 
@@ -265,9 +304,6 @@ Nano requires you to import the desired theme and after to call the function nan
 (setq-default line-spacing 2)
 #+end_src
 
-* Customizations
-** Appearance
-
 * Layers
 ** Helm Projectile
 #+begin_src emacs-lisp
@@ -285,9 +321,8 @@ Nano requires you to import the desired theme and after to call the function nan
 
 (lsp-leader-def
  :states 'normal
- ;; :keymaps 'org-mode-map
  "l" 'lsp
- "t" 'lsp-go-to-type-definition
+ "t" 'lsp-goto-type-definition
  "r" 'lsp-ui-peek-find-references
  "j" 'lsp-ui-peek-find-definitions
  "k" 'lsp-ui-peek-jump-backward
@@ -441,7 +476,31 @@ Vim doesn't use eol like emacs. However, with emacs you will want to evaluate fu
 (global-set-key (kbd "C-c y") 'copy-full-path-to-kill-ring)
 #+end_src
 
+* Appearance
+** Company
+#+begin_src emacs-lisp
+(setq company-idle-delay 0)
+(with-eval-after-load 'company
+  (set-face-attribute 'company-tooltip nil :foreground "#5E81AC" :background "#27c12cf13750")
+  (set-face-attribute 'company-tooltip-annotation nil :foreground "#4C566A" :background "#27c12cf13750")
+  (set-face-attribute 'company-tooltip-annotation-selection nil :foreground "#4C566A" :background "#A3BE8C")
+  (set-face-attribute 'company-tooltip-common-selection nil :foreground "white" :background "#A3BE8C")
+  (set-face-attribute 'company-tooltip-common nil :foreground "#A3BE8C" :background "#27c12cf13750")
+  (set-face-attribute 'company-tooltip-selection nil :foreground "white" :background "#A3BE8C"))
+#+end_src
 
+** LSP
+#+begin_src emacs-lisp
+(setq lsp-ui-sideline-diagnostic-max-lines 3)
+(with-eval-after-load 'lsp-ui
+  (set-face-attribute 'lsp-ui-peek-header nil :foreground "white" :background "#3B4252")
+  (set-face-attribute 'lsp-ui-peek-footer nil :foreground "white" :background "#3B4252")
+  (set-face-attribute 'lsp-ui-peek-highlight nil :foreground "#A3BE8C" :background "#27c12cf13750" :box nil)
+  (set-face-attribute 'lsp-ui-peek-peek nil :background "#27c12cf13750") ;; left 
+  (set-face-attribute 'lsp-ui-peek-list nil :background "#27c12cf13750") ;; right
+  (set-face-attribute 'lsp-ui-peek-filename nil :foreground "RosyBrown")
+  (set-face-attribute 'lsp-ui-peek-selection nil :foreground "white" :background "#A3BE8C")) 
+#+end_src
 * Miscellaneous
 ** Open hosts without having to change permissions
 #+begin_src emacs-lisp
@@ -456,22 +515,22 @@ Vim doesn't use eol like emacs. However, with emacs you will want to evaluate fu
 (define-key key-translation-map (kbd "ESC") (kbd "C-g"))
 #+end_src
 
+* Appearance
+
+
 * TODO Later
 ** Melpa (24)
 ** Helm
-*** Helm M-x buffer (style)
-*** Helm show kill ring (style)
-*** Helm style customization (551)
 *** Helm show only basename (565)
 *** Helm hide modeline (569)
-** Snippets (639)
-** Avy styling (665)
-** Company styling (675)
 ** [1] LSP (721)
-** [6] Web mode (812)
+** [5] Web mode (812)
 ** [4] Magit (824)
 ** [2] Flycheck (1142)
-** [5] Languages (1242)
 ** [3] Perspective (1489)
+** Snippets (639)
+** Helm style customization (551)
+** Helm show kill ring (style)
+** Helm M-x buffer (style)
+** Company styling (675)
 ** Custom colors (1790)
-
