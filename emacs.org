@@ -149,6 +149,16 @@ For keybindings, navigate to Keybindings section
 ** Company
 
 ** Perspective
+*** Install
+#+begin_src emacs-lisp
+(straight-use-package 'perspective)
+#+end_src
+
+*** Set default file to save to
+#+begin_src emacs-lisp
+;; (setq persp-state-default-file "~/.emacs.d/perspective/default")
+#+end_src
+
 ** Vertico & Orderless
 ** Which Key
 #+begin_src emacs-lisp

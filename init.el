@@ -62,6 +62,10 @@
 
 (setq projectile-track-known-projects-automatically nil)
 
+(straight-use-package 'perspective)
+
+;; (setq persp-state-default-file "~/.emacs.d/perspective/default")
+
 (straight-use-package 'which-key)
 (which-key-mode)
 
