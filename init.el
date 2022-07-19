@@ -51,6 +51,8 @@
 
 (straight-use-package 'helm-swoop)
 
+(define-key helm-map (kbd "TAB") #'helm-execute-persistent-action)
+
 (straight-use-package 'projectile)
 (require 'projectile)
 

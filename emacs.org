@@ -122,8 +122,12 @@ For keybindings, navigate to Keybindings section
 (straight-use-package 'helm-swoop)
 #+end_src
 
-** Projectile
+*** Stop TAB from using Dired
+#+begin_src emacs-lisp
+(define-key helm-map (kbd "TAB") #'helm-execute-persistent-action) 
+#+end_src
 
+** Projectile
 *** Install
 #+begin_src emacs-lisp
 (straight-use-package 'projectile)
