@@ -60,6 +60,9 @@
 
 (setq projectile-track-known-projects-automatically nil)
 
+(straight-use-package 'which-key)
+(which-key-mode)
+
 ;; (straight-use-package 'treemacs)
 
 (straight-use-package 'typescript-mode)
@@ -98,9 +101,17 @@
 (straight-use-package 'multi-vterm)
 
 (straight-use-package 'lsp-mode)
+
 (straight-use-package 'lsp-ui)
-(straight-use-package 'helm-lsp)
+(setq lsp-ui-sideline-diagnostic-max-lines 20)
+(setq lsp-ui-sideline-enable t)
+
+
+(add-hook 'lsp-mode-hook #'lsp-enable-which-key-integration)
+
 (straight-use-package 'lsp-treemacs)
+(with-eval-after-load 'lsp-treemacs
+  (set-face-attribute 'lsp-treemacs-file-error nil :foreground "#BF616A")) ;; left
 
 (straight-use-package 'company)
 
@@ -114,6 +125,8 @@
     (setq lsp-headerline-breadcrumb-enable nil))
 ;;    (add-hook 'lsp-mode-hook #'lsp-enable-which-key-integration)
 ;;    (yas-global-mode))
+
+(straight-use-package 'flycheck)
 
 (straight-use-package
   '(nano-emacs :type git :host github :repo "rougier/nano-emacs"))
@@ -140,6 +153,8 @@
 (straight-use-package 'helm-projectile)
 (require 'helm-projectile)
 (helm-projectile-on)
+
+(straight-use-package 'helm-lsp)
 
 (general-create-definer lsp-leader-def
   :prefix "SPC l")
@@ -278,6 +293,8 @@
   (set-face-attribute 'lsp-ui-peek-list nil :background "#27c12cf13750") ;; right
   (set-face-attribute 'lsp-ui-peek-filename nil :foreground "RosyBrown")
   (set-face-attribute 'lsp-ui-peek-selection nil :foreground "white" :background "#A3BE8C"))
+
+(set-face-attribute 'error nil :foreground "#BF616A" :background "#2E3440")
 
 (defun hosts ()
   "Open /etc/hosts as root."

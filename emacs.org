@@ -146,6 +146,11 @@ For keybindings, navigate to Keybindings section
 
 ** Perspective
 ** Vertico & Orderless
+** Which Key
+#+begin_src emacs-lisp
+(straight-use-package 'which-key)
+(which-key-mode)
+#+end_src
 
 * Languages
 ** Treemacs
@@ -235,15 +240,29 @@ This doesn't work atm.
 (straight-use-package 'multi-vterm)
 #+end_src
 
-** Rest Client
+** TODO Rest Client
 
 * IDE
 ** LSP
 #+begin_src emacs-lisp
 (straight-use-package 'lsp-mode)
+#+end_src
+
+*** LSP UI
+#+begin_src emacs-lisp
 (straight-use-package 'lsp-ui)
-(straight-use-package 'helm-lsp)
+(setq lsp-ui-sideline-diagnostic-max-lines 20)
+(setq lsp-ui-sideline-enable t)
+
+
+(add-hook 'lsp-mode-hook #'lsp-enable-which-key-integration)
+
+#+end_src
+*** LSP Treemacs
+#+begin_src emacs-lisp
 (straight-use-package 'lsp-treemacs)
+(with-eval-after-load 'lsp-treemacs
+  (set-face-attribute 'lsp-treemacs-file-error nil :foreground "#BF616A")) ;; left
 #+end_src
 *** Company
 #+begin_src emacs-lisp
@@ -264,6 +283,11 @@ This doesn't work atm.
 ;;    (yas-global-mode))
 #+end_src
 ** Flycheck
+Note: LSP UI Sideline uses flycheck
+#+begin_src emacs-lisp
+(straight-use-package 'flycheck)
+#+end_src
+
 ** Eslint
 
 * Appearance
@@ -310,6 +334,11 @@ Nano requires you to import the desired theme and after to call the function nan
 (straight-use-package 'helm-projectile)
 (require 'helm-projectile)
 (helm-projectile-on)
+#+end_src
+
+** LSP Helm
+#+begin_src emacs-lisp
+(straight-use-package 'helm-lsp)
 #+end_src
 
 * Keybindings
@@ -471,8 +500,6 @@ Vim doesn't use eol like emacs. However, with emacs you will want to evaluate fu
 ** Emacs
 *** Copy full path to kill ring
 #+begin_src emacs-lisp
-
-
 (global-set-key (kbd "C-c y") 'copy-full-path-to-kill-ring)
 #+end_src
 
@@ -501,6 +528,11 @@ Vim doesn't use eol like emacs. However, with emacs you will want to evaluate fu
   (set-face-attribute 'lsp-ui-peek-filename nil :foreground "RosyBrown")
   (set-face-attribute 'lsp-ui-peek-selection nil :foreground "white" :background "#A3BE8C")) 
 #+end_src
+
+** Error
+#+begin_src emacs-lisp
+(set-face-attribute 'error nil :foreground "#BF616A" :background "#2E3440")
+#+end_src
 * Miscellaneous
 ** Open hosts without having to change permissions
 #+begin_src emacs-lisp
@@ -514,23 +546,3 @@ Vim doesn't use eol like emacs. However, with emacs you will want to evaluate fu
 #+begin_src emacs-lisp
 (define-key key-translation-map (kbd "ESC") (kbd "C-g"))
 #+end_src
-
-* Appearance
-
-
-* TODO Later
-** Melpa (24)
-** Helm
-*** Helm show only basename (565)
-*** Helm hide modeline (569)
-** [1] LSP (721)
-** [5] Web mode (812)
-** [4] Magit (824)
-** [2] Flycheck (1142)
-** [3] Perspective (1489)
-** Snippets (639)
-** Helm style customization (551)
-** Helm show kill ring (style)
-** Helm M-x buffer (style)
-** Company styling (675)
-** Custom colors (1790)
