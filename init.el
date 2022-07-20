@@ -87,13 +87,10 @@
 
 (setq org-src-tab-acts-natively nil)
 
-(org-indent-mode)
-(visual-line-mode 1)
+(setq org-startup-indented t)
 
-(require 'color)
-(set-face-attribute 'org-block nil :background
-                    (color-darken-name
-                     (face-attribute 'default :background) 3))
+(with-eval-after-load 'org
+  (set-face-attribute 'org-block nil :background "#27c12cf13750"))
 
 (setq org-ellipsis " ▾")
 
@@ -290,6 +287,20 @@
   (set-face-attribute 'company-tooltip-common nil :foreground "#A3BE8C" :background "#27c12cf13750")
   (set-face-attribute 'company-tooltip-selection nil :foreground "white" :background "#A3BE8C"))
 
+(with-eval-after-load 'helm
+  (set-face-attribute 'helm-buffer-process nil :foreground "#BF616A")
+  (set-face-attribute 'helm-ff-directory nil :background "#2E3440" :foreground "RosyBrown")
+  (set-face-attribute 'helm-ff-dotted-directory nil :background "#2E3440" :foreground "RosyBrown")
+  (set-face-attribute 'helm-ff-file-extension nil :foreground "#81A1C1")
+  (set-face-attribute 'helm-ff-executable nil :foreground "#EBCB8B")
+  (set-face-attribute 'helm-ff-prefix nil :background "#2E3440" :foreground "#4C566A")
+  (set-face-attribute 'helm-header-line-left-margin nil :background "#2E3440" :foreground "#4C566A"))
+
+;;  '(orderless-match-face-0 ((t (:foreground "#A3BE8C" :weight normal)))))
+
+(with-eval-after-load 'helm-swoop
+  (set-face-attribute 'helm-swoop-target-word-face nil :background "#434C5E" :foreground "#A3BE8C"))
+
 (setq lsp-ui-sideline-diagnostic-max-lines 3)
 (with-eval-after-load 'lsp-ui
   (set-face-attribute 'lsp-ui-peek-header nil :foreground "white" :background "#3B4252")
@@ -299,6 +310,9 @@
   (set-face-attribute 'lsp-ui-peek-list nil :background "#27c12cf13750") ;; right
   (set-face-attribute 'lsp-ui-peek-filename nil :foreground "RosyBrown")
   (set-face-attribute 'lsp-ui-peek-selection nil :foreground "white" :background "#A3BE8C"))
+
+(with-eval-after-load 'org
+  (set-face-attribute 'org-block nil :background "#27c12cf13750"))
 
 (set-face-attribute 'error nil :foreground "#BF616A" :background "#2E3440")
 

@@ -210,21 +210,16 @@ Pressing return causes the entire block to indent. This fixes issue.
 (setq org-src-tab-acts-natively nil)
 #+end_src
 
-*** TODO Org indent mode
-This doesn't work atm.
+*** Org indent mode
 #+begin_src emacs-lisp
-(org-indent-mode)
-(visual-line-mode 1)
+(setq org-startup-indented t)
 #+end_src
 
 *** Appearance
-**** TODO Org background color
-This doesn't work atm.
+**** Org background color
 #+begin_src emacs-lisp
-(require 'color)
-(set-face-attribute 'org-block nil :background
-                    (color-darken-name
-                     (face-attribute 'default :background) 3))
+(with-eval-after-load 'org
+  (set-face-attribute 'org-block nil :background "#27c12cf13750"))
 #+end_src
 
 **** Set ellipsis to down arrow
@@ -530,6 +525,25 @@ Vim doesn't use eol like emacs. However, with emacs you will want to evaluate fu
   (set-face-attribute 'company-tooltip-selection nil :foreground "white" :background "#A3BE8C"))
 #+end_src
 
+** Helm
+#+begin_src emacs-lisp
+(with-eval-after-load 'helm
+  (set-face-attribute 'helm-buffer-process nil :foreground "#BF616A")
+  (set-face-attribute 'helm-ff-directory nil :background "#2E3440" :foreground "RosyBrown")
+  (set-face-attribute 'helm-ff-dotted-directory nil :background "#2E3440" :foreground "RosyBrown")
+  (set-face-attribute 'helm-ff-file-extension nil :foreground "#81A1C1")
+  (set-face-attribute 'helm-ff-executable nil :foreground "#EBCB8B")
+  (set-face-attribute 'helm-ff-prefix nil :background "#2E3440" :foreground "#4C566A")
+  (set-face-attribute 'helm-header-line-left-margin nil :background "#2E3440" :foreground "#4C566A"))
+
+;;  '(orderless-match-face-0 ((t (:foreground "#A3BE8C" :weight normal)))))
+#+end_src
+*** Helm Swoop
+#+begin_src emacs-lisp
+(with-eval-after-load 'helm-swoop
+  (set-face-attribute 'helm-swoop-target-word-face nil :background "#434C5E" :foreground "#A3BE8C"))
+#+end_src
+
 ** LSP
 #+begin_src emacs-lisp
 (setq lsp-ui-sideline-diagnostic-max-lines 3)
@@ -541,6 +555,12 @@ Vim doesn't use eol like emacs. However, with emacs you will want to evaluate fu
   (set-face-attribute 'lsp-ui-peek-list nil :background "#27c12cf13750") ;; right
   (set-face-attribute 'lsp-ui-peek-filename nil :foreground "RosyBrown")
   (set-face-attribute 'lsp-ui-peek-selection nil :foreground "white" :background "#A3BE8C")) 
+#+end_src
+
+** Org Mode
+#+begin_src emacs-lisp
+(with-eval-after-load 'org
+  (set-face-attribute 'org-block nil :background "#27c12cf13750"))
 #+end_src
 
 ** Error
