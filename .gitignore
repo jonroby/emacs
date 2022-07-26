@@ -1,0 +1,9 @@
+straight/build
+straight/build-cache.el
+straight/repos
+
+auto-save-list
+
+org-persist
+
+projectile-bookmarks.eld
