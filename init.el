@@ -14,7 +14,7 @@
   (load bootstrap-file nil 'nomessage))
 
 ;; TODO Temporary
-(global-set-key (kbd "C-c e") (lambda () (interactive) (find-file "~/.emacs.d/init.org")))
+(global-set-key (kbd "C-c e") (lambda () (interactive) (find-file "~/Desktop/code/my-ts-app/src/App.tsx")))
 
 (setq ring-bell-function 'ignore)
 
@@ -24,9 +24,18 @@
 
 (setq create-lockfiles nil)
 
+(setq evil-want-keybinding nil)
+
 (straight-use-package 'evil)
 (require 'evil)
 (evil-mode 1)
+
+(straight-use-package 'evil-collection)
+(evil-collection-init)
+
+;; (with-eval-after-load 'evil-collection
+;; (evil-collection-setup-minibuffer t))
+(setq evil-want-minibuffer t)
 
 (straight-use-package 'avy)
 (avy-setup-default)
@@ -52,6 +61,13 @@
 (straight-use-package 'helm-swoop)
 
 (define-key helm-map (kbd "TAB") #'helm-execute-persistent-action)
+
+(fset 'helm-display-mode-line #'ignore)
+;; (add-hook 'helm-after-initialize-hook
+;;           (defun hide-mode-line-in-helm-buffer ()
+;;             "Hide mode line in `helm-buffer'."
+;;             (with-helm-buffer
+;;               (setq-local mode-line-format nil))))
 
 (straight-use-package 'projectile)
 (require 'projectile)
@@ -109,7 +125,6 @@
 (setq lsp-ui-sideline-diagnostic-max-lines 20)
 (setq lsp-ui-sideline-enable t)
 
-
 (add-hook 'lsp-mode-hook #'lsp-enable-which-key-integration)
 
 (straight-use-package 'lsp-treemacs)
@@ -130,6 +145,11 @@
 ;;    (yas-global-mode))
 
 (straight-use-package 'flycheck)
+
+;; (with-eval-after-load 'flycheck
+  ;; (set-face-attribute 'flycheck-error nil :underline))
+  ;; (:color "#BF616A")))
+  ;; (set-face-attribute 'flycheck-info nil :underline (:color "#A3BE8C" :style 'wave)))
 
 (straight-use-package
   '(nano-emacs :type git :host github :repo "rougier/nano-emacs"))
@@ -156,6 +176,8 @@
 (straight-use-package 'helm-projectile)
 (require 'helm-projectile)
 (helm-projectile-on)
+
+(straight-use-package 'helm-ag)
 
 (straight-use-package 'helm-lsp)
 
@@ -206,6 +228,7 @@
  "a" 'projectile-add-known-project
  "p" 'helm-projectile-switch-project
  "f" 'helm-projectile-find-file
+ "t" 'helm-projectile-ag
  "b" 'projectile-display-buffer
  )
 
@@ -248,6 +271,7 @@
   "/" 'helm-find-files
   "s" 'helm-swoop
   "m" 'magit
+  "a" 'save-buffer
   )
 
 (evil-define-key '(normal visual) 'global (kbd ",") 'evil-scroll-down)
@@ -276,6 +300,12 @@
 (define-key evil-motion-state-map "9" 'other-window)
 (define-key evil-motion-state-map "f" 'avy-goto-word-1)
 
+(defun copy-full-path-to-kill-ring ()
+  "copy buffer's full path to kill ring"
+  (interactive)
+  (when buffer-file-name
+    (kill-new (file-truename buffer-file-name))))
+
 (global-set-key (kbd "C-c y") 'copy-full-path-to-kill-ring)
 
 (setq company-idle-delay 0)
@@ -294,7 +324,8 @@
   (set-face-attribute 'helm-ff-file-extension nil :foreground "#81A1C1")
   (set-face-attribute 'helm-ff-executable nil :foreground "#EBCB8B")
   (set-face-attribute 'helm-ff-prefix nil :background "#2E3440" :foreground "#4C566A")
-  (set-face-attribute 'helm-header-line-left-margin nil :background "#2E3440" :foreground "#4C566A"))
+  (set-face-attribute 'helm-header-line-left-margin nil :background "#2E3440" :foreground "#4C566A")
+  (set-face-attribute 'helm-separator nil :foreground "#2E3440"))
 
 ;;  '(orderless-match-face-0 ((t (:foreground "#A3BE8C" :weight normal)))))
 
@@ -322,3 +353,10 @@
   (find-file "/sudo::/etc/hosts"))
 
 (define-key key-translation-map (kbd "ESC") (kbd "C-g"))
+
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(helm-M-x-key ((t (:extend t :foreground "#434C5E")))))

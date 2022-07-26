@@ -42,7 +42,7 @@ indent-region
   (load bootstrap-file nil 'nomessage))
 
 ;; TODO Temporary
-(global-set-key (kbd "C-c e") (lambda () (interactive) (find-file "~/.emacs.d/init.org")))
+(global-set-key (kbd "C-c e") (lambda () (interactive) (find-file "~/Desktop/code/my-ts-app/src/App.tsx")))
 #+end_src
 
 * Defaults
@@ -71,9 +71,19 @@ indent-region
 ** Evil
 *** Install
 #+begin_src emacs-lisp
+(setq evil-want-keybinding nil)
+
 (straight-use-package 'evil)
 (require 'evil)
 (evil-mode 1)
+#+end_src
+
+*** Evil Collection
+#+begin_src emacs-lisp
+(straight-use-package 'evil-collection)
+(evil-collection-init)
+
+(setq evil-want-minibuffer t)
 #+end_src
 
 ** Avy
@@ -125,6 +135,18 @@ For keybindings, navigate to Keybindings section
 *** Stop TAB from using Dired
 #+begin_src emacs-lisp
 (define-key helm-map (kbd "TAB") #'helm-execute-persistent-action) 
+#+end_src
+
+*** Helm Modeline
+Helm provides another mode line that provides useless information
+This command removes it
+#+begin_src emacs-lisp
+(fset 'helm-display-mode-line #'ignore)
+;; (add-hook 'helm-after-initialize-hook
+;;           (defun hide-mode-line-in-helm-buffer ()
+;;             "Hide mode line in `helm-buffer'."
+;;             (with-helm-buffer
+;;               (setq-local mode-line-format nil))))
 #+end_src
 
 ** Projectile
@@ -240,6 +262,9 @@ Pressing return causes the entire block to indent. This fixes issue.
 ** Magit
 ** Terminal
 *** Vterm
+brew install cmake libtool
+If you receive prompt to compile, it might not recognize cmake 
+See comments (and follow them exactly) for compilation https://github.com/akermu/emacs-libvterm/issues/169#issuecomment-568668946
 #+begin_src emacs-lisp
 (straight-use-package 'vterm)
 #+end_src
@@ -263,10 +288,9 @@ Pressing return causes the entire block to indent. This fixes issue.
 (setq lsp-ui-sideline-diagnostic-max-lines 20)
 (setq lsp-ui-sideline-enable t)
 
-
 (add-hook 'lsp-mode-hook #'lsp-enable-which-key-integration)
-
 #+end_src
+
 *** LSP Treemacs
 #+begin_src emacs-lisp
 (straight-use-package 'lsp-treemacs)
@@ -291,10 +315,19 @@ Pressing return causes the entire block to indent. This fixes issue.
 ;;    (add-hook 'lsp-mode-hook #'lsp-enable-which-key-integration)
 ;;    (yas-global-mode))
 #+end_src
+
 ** Flycheck
 Note: LSP UI Sideline uses flycheck
 #+begin_src emacs-lisp
 (straight-use-package 'flycheck)
+#+end_src
+
+*** TODO Appearance
+#+begin_src emacs-lisp
+;; (with-eval-after-load 'flycheck
+  ;; (set-face-attribute 'flycheck-error nil :underline))
+  ;; (:color "#BF616A")))
+  ;; (set-face-attribute 'flycheck-info nil :underline (:color "#A3BE8C" :style 'wave)))
 #+end_src
 
 ** Eslint
@@ -337,12 +370,19 @@ Nano requires you to import the desired theme and after to call the function nan
 (setq-default line-spacing 2)
 #+end_src
 
+
+
 * Layers
 ** Helm Projectile
 #+begin_src emacs-lisp
 (straight-use-package 'helm-projectile)
 (require 'helm-projectile)
 (helm-projectile-on)
+#+end_src
+
+** Helm Ag
+#+begin_src emacs-lisp
+(straight-use-package 'helm-ag)
 #+end_src
 
 ** LSP Helm
@@ -410,6 +450,7 @@ Nano requires you to import the desired theme and after to call the function nan
  "a" 'projectile-add-known-project
  "p" 'helm-projectile-switch-project
  "f" 'helm-projectile-find-file
+ "t" 'helm-projectile-ag
  "b" 'projectile-display-buffer
  )
 #+end_src
@@ -461,6 +502,7 @@ Nano requires you to import the desired theme and after to call the function nan
   "/" 'helm-find-files
   "s" 'helm-swoop
   "m" 'magit
+  "a" 'save-buffer
   )
 #+end_src
 
@@ -509,6 +551,12 @@ Vim doesn't use eol like emacs. However, with emacs you will want to evaluate fu
 ** Emacs
 *** Copy full path to kill ring
 #+begin_src emacs-lisp
+(defun copy-full-path-to-kill-ring ()
+  "copy buffer's full path to kill ring"
+  (interactive)
+  (when buffer-file-name
+    (kill-new (file-truename buffer-file-name))))
+
 (global-set-key (kbd "C-c y") 'copy-full-path-to-kill-ring)
 #+end_src
 
@@ -534,7 +582,8 @@ Vim doesn't use eol like emacs. However, with emacs you will want to evaluate fu
   (set-face-attribute 'helm-ff-file-extension nil :foreground "#81A1C1")
   (set-face-attribute 'helm-ff-executable nil :foreground "#EBCB8B")
   (set-face-attribute 'helm-ff-prefix nil :background "#2E3440" :foreground "#4C566A")
-  (set-face-attribute 'helm-header-line-left-margin nil :background "#2E3440" :foreground "#4C566A"))
+  (set-face-attribute 'helm-header-line-left-margin nil :background "#2E3440" :foreground "#4C566A")
+  (set-face-attribute 'helm-separator nil :foreground "#2E3440"))
 
 ;;  '(orderless-match-face-0 ((t (:foreground "#A3BE8C" :weight normal)))))
 #+end_src
@@ -579,4 +628,15 @@ Vim doesn't use eol like emacs. However, with emacs you will want to evaluate fu
 ** Capslock key escapes
 #+begin_src emacs-lisp
 (define-key key-translation-map (kbd "ESC") (kbd "C-g"))
+#+end_src
+
+* Emacs Custom Set Faces
+** This is last resort
+#+begin_src emacs-lisp
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(helm-M-x-key ((t (:extend t :foreground "#434C5E")))))
 #+end_src
