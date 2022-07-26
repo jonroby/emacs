@@ -82,8 +82,6 @@ indent-region
 #+begin_src emacs-lisp
 (straight-use-package 'evil-collection)
 (evil-collection-init)
-
-(setq evil-want-minibuffer t)
 #+end_src
 
 ** Avy
@@ -625,7 +623,7 @@ Vim doesn't use eol like emacs. However, with emacs you will want to evaluate fu
   (find-file "/sudo::/etc/hosts"))
 #+end_src
 
-** Capslock key escapes
+** Capslock key escape
 #+begin_src emacs-lisp
 (define-key key-translation-map (kbd "ESC") (kbd "C-g"))
 #+end_src
@@ -640,3 +638,5 @@ Vim doesn't use eol like emacs. However, with emacs you will want to evaluate fu
  ;; If there is more than one, they won't work right.
  '(helm-M-x-key ((t (:extend t :foreground "#434C5E")))))
 #+end_src
+
+

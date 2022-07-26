@@ -33,10 +33,6 @@
 (straight-use-package 'evil-collection)
 (evil-collection-init)
 
-;; (with-eval-after-load 'evil-collection
-;; (evil-collection-setup-minibuffer t))
-(setq evil-want-minibuffer t)
-
 (straight-use-package 'avy)
 (avy-setup-default)
 
