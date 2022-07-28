@@ -82,6 +82,12 @@
 
 (straight-use-package 'typescript-mode)
 (add-to-list 'auto-mode-alist '("\\.tsx\\'" . typescript-mode))
+(add-to-list 'auto-mode-alist '("\\.js\\'" . typescript-mode))
+
+(straight-use-package 'editorconfig)
+(editorconfig-mode 1)
+
+(straight-use-package 'prettier)
 
 (straight-use-package 'org)
 (require 'org)
@@ -184,6 +190,7 @@
  "r" 'lsp-ui-peek-find-references
  "j" 'lsp-ui-peek-find-definitions
  "k" 'lsp-ui-peek-jump-backward
+ "p" 'prettier-prettify
  )
 
 (general-create-definer window-leader-def

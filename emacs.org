@@ -181,17 +181,32 @@ This command removes it
 (which-key-mode)
 #+end_src
 
-* Languages
+* Typescript and Frontend Development
 ** Treemacs
 #+begin_src emacs-lisp
 ;; (straight-use-package 'treemacs)
 #+end_src
+
 ** Typescript
+TODO: Javascript doesn't open as typescript
 #+begin_src emacs-lisp
 (straight-use-package 'typescript-mode)
 (add-to-list 'auto-mode-alist '("\\.tsx\\'" . typescript-mode))
+(add-to-list 'auto-mode-alist '("\\.js\\'" . typescript-mode))
 #+end_src
 
+** Editorconfig
+Reads .editorconfig from root directory
+#+begin_src emacs-lisp
+(straight-use-package 'editorconfig)
+(editorconfig-mode 1)
+#+end_src
+
+** Prettier
+No further configuration is needed for it to read from root directory (.prettierrc, etc.)
+#+begin_src emacs-lisp
+(straight-use-package 'prettier)
+#+end_src
 
 * Applications
 ** Org Mode
@@ -397,6 +412,7 @@ Nano requires you to import the desired theme and after to call the function nan
  "r" 'lsp-ui-peek-find-references
  "j" 'lsp-ui-peek-find-definitions
  "k" 'lsp-ui-peek-jump-backward
+ "p" 'prettier-prettify
  )
 #+end_src
 
