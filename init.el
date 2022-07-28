@@ -13,9 +13,6 @@
       (eval-print-last-sexp)))
   (load bootstrap-file nil 'nomessage))
 
-;; TODO Temporary
-(global-set-key (kbd "C-c e") (lambda () (interactive) (find-file "~/Desktop/code/my-ts-app/src/App.tsx")))
-
 (setq ring-bell-function 'ignore)
 
 (setq auto-save-default nil)
@@ -89,7 +86,7 @@
 (straight-use-package 'org)
 (require 'org)
 
-(setq org-agenda-files (directory-files-recursively "~/.emacs.d/org" "\.org$"))
+;; (setq org-agenda-files (directory-files-recursively "~/.emacs.d/org" "\.org$"))
 
 (setq org-src-preserve-indentation t)
 

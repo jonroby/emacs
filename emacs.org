@@ -2,8 +2,6 @@
 
 #+PROPERTY: header-args:emacs-lisp :tangle ./init.el
 
-Up To: Line 450
-
 * Help
 ** Tangle file
 org-babel-tangle
@@ -40,9 +38,6 @@ indent-region
       (goto-char (point-max))
       (eval-print-last-sexp)))
   (load bootstrap-file nil 'nomessage))
-
-;; TODO Temporary
-(global-set-key (kbd "C-c e") (lambda () (interactive) (find-file "~/Desktop/code/my-ts-app/src/App.tsx")))
 #+end_src
 
 * Defaults
@@ -208,7 +203,7 @@ This command removes it
 
 *** Org agenda files
 #+begin_src emacs-lisp
-(setq org-agenda-files (directory-files-recursively "~/.emacs.d/org" "\.org$"))
+;; (setq org-agenda-files (directory-files-recursively "~/.emacs.d/org" "\.org$"))
 #+end_src
 
 *** Remove two spaces that are inserted when running emacs auto-indent in org-mode blocks
