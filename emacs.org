@@ -17,6 +17,9 @@ indent-region
 ** Open emacs and Straight will install
 ** Open emacs.org and M-x org-babel-tangle
 
+
+* Setup (non-emacs)
+** To change caps-lock to escape: Preferences -> Keyboard -> Modifier Keys
 * Initialization
 ** Disable package.el from loading packages
 #+begin_src emacs-lisp
@@ -109,6 +112,11 @@ For keybindings, navigate to Keybindings section
 (require 'general)
 
 (general-evil-setup t)
+#+end_src
+
+** Electric Pair
+#+begin_src emacs-lisp
+(electric-pair-mode 1)
 #+end_src
 
 * Navigation
@@ -206,6 +214,11 @@ Reads .editorconfig from root directory
 No further configuration is needed for it to read from root directory (.prettierrc, etc.)
 #+begin_src emacs-lisp
 (straight-use-package 'prettier)
+#+end_src
+
+** Web mode
+#+begin_src emacs-lisp
+(straight-use-package 'web-mode)
 #+end_src
 
 * Applications

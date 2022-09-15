@@ -47,6 +47,8 @@
 
 (general-evil-setup t)
 
+(electric-pair-mode 1)
+
 (straight-use-package 'helm)
 (require 'helm)
 (helm-mode 1)
@@ -88,6 +90,8 @@
 (editorconfig-mode 1)
 
 (straight-use-package 'prettier)
+
+(straight-use-package 'web-mode)
 
 (straight-use-package 'org)
 (require 'org)

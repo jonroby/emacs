@@ -7,3 +7,6 @@ auto-save-list
 org-persist
 
 projectile-bookmarks.eld
+
+.cache
+.lsp-session-v1
