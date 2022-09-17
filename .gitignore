@@ -1,7 +1,6 @@
 straight/build
 straight/build-cache.el
-straight/repos/*
-!straight/repos/nano-emacs
+straight/repos
 
 auto-save-list
 
