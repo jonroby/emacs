@@ -13,6 +13,10 @@
       (eval-print-last-sexp)))
   (load bootstrap-file nil 'nomessage))
 
+(straight-use-package 'exec-path-from-shell)
+(when (memq window-system '(mac ns x))
+  (exec-path-from-shell-initialize))
+
 (setq ring-bell-function 'ignore)
 
 (setq auto-save-default nil)
@@ -316,10 +320,11 @@
 (with-eval-after-load 'company
   (set-face-attribute 'company-tooltip nil :foreground "#5E81AC" :background "#27c12cf13750")
   (set-face-attribute 'company-tooltip-annotation nil :foreground "#4C566A" :background "#27c12cf13750")
-  (set-face-attribute 'company-tooltip-annotation-selection nil :foreground "#4C566A" :background "#A3BE8C")
+  ;; (set-face-attribute 'company-tooltip-annotation-selection nil :foreground "#4C566A" :background "#A3BE8C")
   (set-face-attribute 'company-tooltip-common-selection nil :foreground "white" :background "#A3BE8C")
-  (set-face-attribute 'company-tooltip-common nil :foreground "#A3BE8C" :background "#27c12cf13750")
-  (set-face-attribute 'company-tooltip-selection nil :foreground "white" :background "#A3BE8C"))
+  ;; (set-face-attribute 'company-tooltip-common nil :foreground "#A3BE8C" :background "#27c12cf13750")
+  (set-face-attribute 'company-tooltip-selection nil :foreground "white" :background "#434C5E")
+  )
 
 (with-eval-after-load 'helm
   (set-face-attribute 'helm-buffer-process nil :foreground "#BF616A")
