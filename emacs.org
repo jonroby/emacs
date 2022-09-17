@@ -11,12 +11,14 @@ org-babel-tangle
 delete-horizontal-white space
 ** Autoformat
 indent-region
+** To edit blocks
+C-c '
 
 * Install
 ** Copy Straight.el bootstrap script below and paste into init.el
 ** Open emacs and Straight will install
 ** Open emacs.org and M-x org-babel-tangle
-
+** Navigate to straight/repos, rm -rf nano emacs, and git clone jonroby/nano-emacs
 
 * Setup (non-emacs)
 ** To change caps-lock to escape: Preferences -> Keyboard -> Modifier Keys
@@ -41,6 +43,13 @@ indent-region
       (goto-char (point-max))
       (eval-print-last-sexp)))
   (load bootstrap-file nil 'nomessage))
+#+end_src
+
+* Read from Path
+#+begin_src emacs-lisp
+(straight-use-package 'exec-path-from-shell)
+(when (memq window-system '(mac ns x))
+  (exec-path-from-shell-initialize))
 #+end_src
 
 * Defaults
