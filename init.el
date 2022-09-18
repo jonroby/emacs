@@ -36,6 +36,9 @@
 (straight-use-package 'evil-collection)
 (evil-collection-init)
 
+(straight-use-package 'evil-surround)
+(global-evil-surround-mode 1)
+
 (straight-use-package 'avy)
 (avy-setup-default)
 
@@ -300,10 +303,10 @@
   (re-search-backward "^\\|[^[:space:]]")
   (setq evil-this-type (if (eolp) 'exclusive 'inclusive)))
 
-(define-key evil-motion-state-map "g-" 'evil-end-of-line)
+;; (define-key evil-motion-state-map "g-" 'evil-end-of-line) Delete by Oct 31 2022 if not used
 (define-key evil-motion-state-map "-" 'evil-last-non-blank)
 (define-key evil-motion-state-map "1" 'evil-first-non-blank-of-visual-line)
-(define-key evil-motion-state-map "9" 'other-window)
+(define-key evil-motion-state-map ";" 'other-window)
 (define-key evil-motion-state-map "f" 'avy-goto-word-1)
 
 (defun copy-full-path-to-kill-ring ()

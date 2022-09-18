@@ -14,10 +14,6 @@ indent-region
 ** To edit blocks
 C-c '
 
-** Vim
-*** Highlight until space
-vt<space>
-*** 
 
 * Install
 ** Copy Straight.el bootstrap script below and paste into init.el
@@ -99,6 +95,12 @@ vt<space>
 #+begin_src emacs-lisp
 (straight-use-package 'evil-collection)
 (evil-collection-init)
+#+end_src
+
+*** Evil Surround
+#+begin_src emacs-lisp
+(straight-use-package 'evil-surround)
+(global-evil-surround-mode 1)
 #+end_src
 
 ** Avy
@@ -579,13 +581,40 @@ Vim doesn't use eol like emacs. However, with emacs you will want to evaluate fu
 
 **** Keybindings
 #+begin_src emacs-lisp
-(define-key evil-motion-state-map "g-" 'evil-end-of-line)
+;; (define-key evil-motion-state-map "g-" 'evil-end-of-line) Delete by Oct 31 2022 if not used
 (define-key evil-motion-state-map "-" 'evil-last-non-blank)
 (define-key evil-motion-state-map "1" 'evil-first-non-blank-of-visual-line)
-(define-key evil-motion-state-map "9" 'other-window)
+(define-key evil-motion-state-map ";" 'other-window)
 (define-key evil-motion-state-map "f" 'avy-goto-word-1)
 #+end_src
 
+*** Vim Keybindings Help
+
+**** ma - set mark
+**** `a jump to mark a
+**** `` - go to position before last jump
+**** `. - last change
+
+**** H - move to top of screen
+**** M - move to middle of screen
+**** L - move to bottom of screen
+**** zz - center char on screen
+
+**** E - move to end of word (with punctuation)
+Alternate way but left effective: vt<space>
+**** B - move to start of word (with punctuation)
+**** % move to matching char
+**** <n>gg - go to line number
+**** [ ] - go to next keyword?
+**** { } - go to previous, next paragraph
+
+**** J - join line below to current one with one space between (gJ without space)
+**** Visual mode
+***** < > - shift text left right
+***** u / U - change to lower, upper case
+***** S<symbol> - adds symbol arround selected block
+**** ds<symbol> - delete surrounding (non-visual)
+ 
 
 ** Emacs
 *** Copy full path to kill ring
