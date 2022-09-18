@@ -237,6 +237,7 @@ TODO: Javascript doesn't open as typescript
 
 ** Editorconfig
 Reads .editorconfig from root directory
+If you are unhappy with spaces/tabs just create .editorconfig file
 #+begin_src emacs-lisp
 (straight-use-package 'editorconfig)
 (editorconfig-mode 1)
@@ -313,6 +314,9 @@ Pressing return causes the entire block to indent. This fixes issue.
 
 
 ** Magit
+#+begin_src emacs-lisp
+(straight-use-package 'magit)
+#+end_src
 ** Terminal
 *** Vterm
 brew install cmake libtool
@@ -366,7 +370,6 @@ See comments (and follow them exactly) for compilation https://github.com/akermu
 (with-eval-after-load 'lsp-mode
     (setq lsp-headerline-breadcrumb-enable nil))
 ;;    (add-hook 'lsp-mode-hook #'lsp-enable-which-key-integration)
-;;    (yas-global-mode))
 #+end_src
 
 ** Flycheck

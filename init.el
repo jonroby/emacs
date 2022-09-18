@@ -136,6 +136,8 @@
 
 (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
 
+(straight-use-package 'magit)
+
 (straight-use-package 'vterm)
 
 (straight-use-package 'multi-vterm)
@@ -163,7 +165,6 @@
 (with-eval-after-load 'lsp-mode
     (setq lsp-headerline-breadcrumb-enable nil))
 ;;    (add-hook 'lsp-mode-hook #'lsp-enable-which-key-integration)
-;;    (yas-global-mode))
 
 (straight-use-package 'flycheck)
 
