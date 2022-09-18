@@ -141,6 +141,16 @@ For keybindings, navigate to Keybindings section
 (electric-pair-mode 1)
 #+end_src
 
+** Snippets
+#+begin_src emacs-lisp
+(straight-use-package 'yasnippet)
+
+(setq yas-snippet-dirs
+      '("~/.emacs.d/snippets"))
+
+(yas-global-mode 1)
+#+end_src
+
 * Navigation
 ** Helm
 *** Install

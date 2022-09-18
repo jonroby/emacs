@@ -60,6 +60,13 @@
 
 (electric-pair-mode 1)
 
+(straight-use-package 'yasnippet)
+
+(setq yas-snippet-dirs
+      '("~/.emacs.d/snippets"))
+
+(yas-global-mode 1)
+
 (straight-use-package 'helm)
 (require 'helm)
 (helm-mode 1)
