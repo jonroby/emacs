@@ -1,3 +1,0 @@
-[submodule "straight/repos/nano-emacs"]
-	path = straight/repos/nano-emacs
-	url = git@github.com:jonroby/nano-emacs.git
