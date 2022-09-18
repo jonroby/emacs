@@ -2,11 +2,17 @@ straight/build
 straight/build-cache.el
 straight/repos
 
+transient
+
 auto-save-list
 
 org-persist
 
 projectile-bookmarks.eld
+
+projectile.cache
+
+persp
 
 .cache
 .lsp-session-v1

@@ -35,16 +35,20 @@ C-c '
 (defvar bootstrap-version)
 (let ((bootstrap-file
        (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
-      (bootstrap-version 5))
+      (bootstrap-version 6))
   (unless (file-exists-p bootstrap-file)
     (with-current-buffer
         (url-retrieve-synchronously
-         "https://raw.githubusercontent.com/raxod502/straight.el/develop/install.el"
+         "https://raw.githubusercontent.com/radian-software/straight.el/develop/install.el"
          'silent 'inhibit-cookies)
       (goto-char (point-max))
       (eval-print-last-sexp)))
   (load bootstrap-file nil 'nomessage))
 #+end_src
+
+*** Updating Straight
+https://www.reddit.com/r/emacs/comments/caifq4/package_updates_with_straight/
+As I understand it, packages aren't updated automatically. You'd generally run straight-pull-package to get the latest version of a given package (or straight-pull-all to update everything), and then straight-freeze-versions to persist the on-disk versions to your lockfile (~/.emacs.d/straight/versions/default.el by default). You can run straight-thaw-versions at any time to reset on-disk packages to their locked versions, making your config totally reproducible across environments.
 
 
 
@@ -305,6 +309,10 @@ Pressing return causes the entire block to indent. This fixes issue.
 (setq magit-diff-refine-hunk (quote all))
 #+end_src
 
+*** Don't show diffs once committing
+#+begin_src emacs-lisp
+(setq magit-commit-show-diff nil)
+#+end_src
 
 ** Terminal
 *** Vterm
