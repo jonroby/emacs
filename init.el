@@ -42,7 +42,6 @@
 (with-eval-after-load 'avy
   (set-face-attribute 'avy-lead-face nil :background "#BF616A")
   (set-face-attribute 'avy-lead-face-0 nil :background "#5E81AC")
-  
   )
 
 (straight-use-package 'drag-stuff)
@@ -371,6 +370,11 @@
   (find-file "/sudo::/etc/hosts"))
 
 (define-key key-translation-map (kbd "ESC") (kbd "C-g"))
+
+(straight-use-package 'highlight-indent-guides)
+
+(setq highlight-indent-guides-method 'character)
+(add-hook 'typescript-mode-hook 'highlight-indent-guides-mode)
 
 (custom-set-faces
  ;; custom-set-faces was added by Custom.

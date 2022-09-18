@@ -676,6 +676,14 @@ Vim doesn't use eol like emacs. However, with emacs you will want to evaluate fu
 (define-key key-translation-map (kbd "ESC") (kbd "C-g"))
 #+end_src
 
+** Indent dots
+#+begin_src emacs-lisp
+(straight-use-package 'highlight-indent-guides)
+
+(setq highlight-indent-guides-method 'character)
+(add-hook 'typescript-mode-hook 'highlight-indent-guides-mode)
+#+end_src
+
 * Emacs Custom Set Faces
 ** This is last resort
 #+begin_src emacs-lisp
