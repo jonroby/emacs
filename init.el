@@ -39,11 +39,6 @@
 (straight-use-package 'avy)
 (avy-setup-default)
 
-(with-eval-after-load 'avy
-  (set-face-attribute 'avy-lead-face nil :background "#BF616A")
-  (set-face-attribute 'avy-lead-face-0 nil :background "#5E81AC")
-  )
-
 (straight-use-package 'drag-stuff)
 (require 'drag-stuff)
 
@@ -126,17 +121,9 @@
 
 (setq org-startup-indented t)
 
-(with-eval-after-load 'org
-  (set-face-attribute 'org-block nil :background "#27c12cf13750"))
-
-(setq org-ellipsis " ▾")
-
-(straight-use-package 'org-bullets)
-(require 'org-bullets)
-
-(add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
-
 (straight-use-package 'magit)
+
+(setq magit-diff-refine-hunk (quote all))
 
 (straight-use-package 'vterm)
 
@@ -146,6 +133,7 @@
 
 (straight-use-package 'lsp-ui)
 (setq lsp-ui-sideline-diagnostic-max-lines 20)
+;; (setq lsp-ui-sideline-diagnostic-max-lines 3)
 (setq lsp-ui-sideline-enable t)
 
 (add-hook 'lsp-mode-hook #'lsp-enable-which-key-integration)
@@ -167,12 +155,6 @@
 ;;    (add-hook 'lsp-mode-hook #'lsp-enable-which-key-integration)
 
 (straight-use-package 'flycheck)
-
-(with-eval-after-load 'flycheck
-  (set-face-attribute 'flycheck-info nil :underline '(:color "#EBCB8B" :style wave))
-  (set-face-attribute 'flycheck-error nil :underline '(:color "#BF616A" :style wave))
-  
-  )
 
 (straight-use-package
   '(nano-emacs :type git :host github :repo "rougier/nano-emacs"))
@@ -357,7 +339,6 @@
 (with-eval-after-load 'helm-swoop
   (set-face-attribute 'helm-swoop-target-word-face nil :background "#434C5E" :foreground "#A3BE8C"))
 
-(setq lsp-ui-sideline-diagnostic-max-lines 3)
 (with-eval-after-load 'lsp-ui
   (set-face-attribute 'lsp-ui-peek-header nil :foreground "white" :background "#3B4252")
   (set-face-attribute 'lsp-ui-peek-footer nil :foreground "white" :background "#3B4252")
@@ -367,8 +348,48 @@
   (set-face-attribute 'lsp-ui-peek-filename nil :foreground "RosyBrown")
   (set-face-attribute 'lsp-ui-peek-selection nil :foreground "white" :background "#A3BE8C"))
 
+(with-eval-after-load 'magit
+  ;; Selection highlight (same as helm-selection)
+  (set-face-attribute 'magit-section-highlight nil :foreground "white" :background "#434C5E")
+
+  (set-face-attribute 'magit-diff-hunk-heading nil :foreground "white" :background "#27c12cf13750")
+  (set-face-attribute 'magit-diff-hunk-heading-highlight nil :foreground "white" :background "#434C5E")
+
+  ;; When highlighting file, hunk heading changes color
+  (set-face-attribute 'magit-diff-lines-heading nil :foreground "#24292f" :background "#4C566A")
+
+  ;; expanded but non-highlighted part of file 
+  (set-face-attribute 'magit-diff-removed nil :foreground "#677691" :background "#2E3440")
+  (set-face-attribute 'magit-diff-added nil :foreground "#677691" :background "#2E3440")
+  (set-face-attribute 'magit-diff-context nil :foreground "#677691" :background "#2E3440")
+  (set-face-attribute 'magit-diff-context-highlight nil :foreground "#24292f" :background "white") ;; Non-highlighted parts of file
+  
+  ;; github colors
+  (set-face-attribute 'magit-diff-added-highlight nil :foreground "#24292f" :background "#e6ffec") ;; background hightlight
+  (set-face-attribute 'magit-diff-removed-highlight nil :foreground "#24292f" :background "#ffebe9") ;; background highlight
+  (set-face-attribute 'diff-refine-added nil :foreground "#24292f" :background "#Abf2BC" :font "SF Mono") ;; specific diff highlight
+  (set-face-attribute 'diff-refine-removed nil :foreground "#24292f" :background "#ff8082" :font "SF Mono" :strike-through nil) ;; specific diff highlight 
+  )
+
+(with-eval-after-load 'avy
+  (set-face-attribute 'avy-lead-face nil :background "#BF616A")
+  (set-face-attribute 'avy-lead-face-0 nil :background "#5E81AC")
+  )
+
+(with-eval-after-load 'flycheck
+  (set-face-attribute 'flycheck-info nil :underline '(:color "#EBCB8B" :style wave))
+  (set-face-attribute 'flycheck-error nil :underline '(:color "#BF616A" :style wave))
+  )
+
 (with-eval-after-load 'org
   (set-face-attribute 'org-block nil :background "#27c12cf13750"))
+
+(setq org-ellipsis " ▾")
+
+(straight-use-package 'org-bullets)
+(require 'org-bullets)
+
+(add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
 
 (set-face-attribute 'error nil :foreground "#BF616A" :background "#2E3440")
 

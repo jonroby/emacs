@@ -14,6 +14,11 @@ indent-region
 ** To edit blocks
 C-c '
 
+** Vim
+*** Highlight until space
+vt<space>
+*** 
+
 * Install
 ** Copy Straight.el bootstrap script below and paste into init.el
 ** Open emacs and Straight will install
@@ -103,13 +108,7 @@ C-c '
 (avy-setup-default)
 #+end_src
 
-*** Appearance
-#+begin_src emacs-lisp
-(with-eval-after-load 'avy
-  (set-face-attribute 'avy-lead-face nil :background "#BF616A")
-  (set-face-attribute 'avy-lead-face-0 nil :background "#5E81AC")
-  )
-#+end_src
+
 
 ** Drag Text
 TODO: Can evil handle this?
@@ -291,32 +290,20 @@ Pressing return causes the entire block to indent. This fixes issue.
 (setq org-startup-indented t)
 #+end_src
 
-*** Appearance
-**** Org background color
-#+begin_src emacs-lisp
-(with-eval-after-load 'org
-  (set-face-attribute 'org-block nil :background "#27c12cf13750"))
-#+end_src
-
-**** Set ellipsis to down arrow
-#+begin_src emacs-lisp
-(setq org-ellipsis " ▾")
-#+end_src
-
-**** Org bullets
-#+begin_src emacs-lisp
-(straight-use-package 'org-bullets)
-(require 'org-bullets)
-
-(add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
-#+end_src
-
 
 
 ** Magit
+*** Installation
 #+begin_src emacs-lisp
 (straight-use-package 'magit)
 #+end_src
+
+*** Only show diff within line
+#+begin_src emacs-lisp
+(setq magit-diff-refine-hunk (quote all))
+#+end_src
+
+
 ** Terminal
 *** Vterm
 brew install cmake libtool
@@ -343,6 +330,7 @@ See comments (and follow them exactly) for compilation https://github.com/akermu
 #+begin_src emacs-lisp
 (straight-use-package 'lsp-ui)
 (setq lsp-ui-sideline-diagnostic-max-lines 20)
+;; (setq lsp-ui-sideline-diagnostic-max-lines 3)
 (setq lsp-ui-sideline-enable t)
 
 (add-hook 'lsp-mode-hook #'lsp-enable-which-key-integration)
@@ -378,18 +366,11 @@ Note: LSP UI Sideline uses flycheck
 (straight-use-package 'flycheck)
 #+end_src
 
-*** Appearance
-#+begin_src emacs-lisp
-(with-eval-after-load 'flycheck
-  (set-face-attribute 'flycheck-info nil :underline '(:color "#EBCB8B" :style wave))
-  (set-face-attribute 'flycheck-error nil :underline '(:color "#BF616A" :style wave))
-  
-  )
-#+end_src
+
 
 ** Eslint
 
-* Appearance
+* Emacs Appearance
 ** Nano
 Nano requires you to import the desired theme and after to call the function nano-faces and nano-theme.
 #+begin_src emacs-lisp
@@ -618,7 +599,7 @@ Vim doesn't use eol like emacs. However, with emacs you will want to evaluate fu
 (global-set-key (kbd "C-c y") 'copy-full-path-to-kill-ring)
 #+end_src
 
-* Appearance
+* Lib Appearance
 ** Company
 #+begin_src emacs-lisp
 (setq company-idle-delay 0)
@@ -654,7 +635,6 @@ Vim doesn't use eol like emacs. However, with emacs you will want to evaluate fu
 
 ** LSP
 #+begin_src emacs-lisp
-(setq lsp-ui-sideline-diagnostic-max-lines 3)
 (with-eval-after-load 'lsp-ui
   (set-face-attribute 'lsp-ui-peek-header nil :foreground "white" :background "#3B4252")
   (set-face-attribute 'lsp-ui-peek-footer nil :foreground "white" :background "#3B4252")
@@ -665,16 +645,73 @@ Vim doesn't use eol like emacs. However, with emacs you will want to evaluate fu
   (set-face-attribute 'lsp-ui-peek-selection nil :foreground "white" :background "#A3BE8C")) 
 #+end_src
 
-** Org Mode
+** Magit
+#+begin_src emacs-lisp
+(with-eval-after-load 'magit
+  ;; Selection highlight (same as helm-selection)
+  (set-face-attribute 'magit-section-highlight nil :foreground "white" :background "#434C5E")
+
+  (set-face-attribute 'magit-diff-hunk-heading nil :foreground "white" :background "#27c12cf13750")
+  (set-face-attribute 'magit-diff-hunk-heading-highlight nil :foreground "white" :background "#434C5E")
+
+  ;; When highlighting file, hunk heading changes color
+  (set-face-attribute 'magit-diff-lines-heading nil :foreground "#24292f" :background "#4C566A")
+
+  ;; expanded but non-highlighted part of file 
+  (set-face-attribute 'magit-diff-removed nil :foreground "#677691" :background "#2E3440")
+  (set-face-attribute 'magit-diff-added nil :foreground "#677691" :background "#2E3440")
+  (set-face-attribute 'magit-diff-context nil :foreground "#677691" :background "#2E3440")
+  (set-face-attribute 'magit-diff-context-highlight nil :foreground "#24292f" :background "white") ;; Non-highlighted parts of file
+  
+  ;; github colors
+  (set-face-attribute 'magit-diff-added-highlight nil :foreground "#24292f" :background "#e6ffec") ;; background hightlight
+  (set-face-attribute 'magit-diff-removed-highlight nil :foreground "#24292f" :background "#ffebe9") ;; background highlight
+  (set-face-attribute 'diff-refine-added nil :foreground "#24292f" :background "#Abf2BC" :font "SF Mono") ;; specific diff highlight
+  (set-face-attribute 'diff-refine-removed nil :foreground "#24292f" :background "#ff8082" :font "SF Mono" :strike-through nil) ;; specific diff highlight 
+  )
+#+end_src
+
+** Avy
+#+begin_src emacs-lisp
+(with-eval-after-load 'avy
+  (set-face-attribute 'avy-lead-face nil :background "#BF616A")
+  (set-face-attribute 'avy-lead-face-0 nil :background "#5E81AC")
+  )
+#+end_src
+
+** Flycheck
+#+begin_src emacs-lisp
+(with-eval-after-load 'flycheck
+  (set-face-attribute 'flycheck-info nil :underline '(:color "#EBCB8B" :style wave))
+  (set-face-attribute 'flycheck-error nil :underline '(:color "#BF616A" :style wave))
+  )
+#+end_src
+
+** Org
+*** Org background color
 #+begin_src emacs-lisp
 (with-eval-after-load 'org
   (set-face-attribute 'org-block nil :background "#27c12cf13750"))
+#+end_src
+
+*** Set ellipsis to down arrow
+#+begin_src emacs-lisp
+(setq org-ellipsis " ▾")
+#+end_src
+
+*** Org bullets
+#+begin_src emacs-lisp
+(straight-use-package 'org-bullets)
+(require 'org-bullets)
+
+(add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
 #+end_src
 
 ** Error
 #+begin_src emacs-lisp
 (set-face-attribute 'error nil :foreground "#BF616A" :background "#2E3440")
 #+end_src
+
 * Miscellaneous
 ** Open hosts without having to change permissions
 #+begin_src emacs-lisp
