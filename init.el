@@ -374,6 +374,8 @@
   (set-face-attribute 'diff-refine-removed nil :foreground "#24292f" :background "#ff8082" :font "SF Mono" :strike-through nil) ;; specific diff highlight 
   )
 
+  (set-face-attribute 'magit-hash nil :foreground "#677691")
+
 (with-eval-after-load 'avy
   (set-face-attribute 'avy-lead-face nil :background "#BF616A")
   (set-face-attribute 'avy-lead-face-0 nil :background "#5E81AC")
