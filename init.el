@@ -25,6 +25,8 @@
 
 (setq create-lockfiles nil)
 
+(set-fringe-mode 0)
+
 (setq evil-want-keybinding nil)
 
 (straight-use-package 'evil)
@@ -36,6 +38,12 @@
 
 (straight-use-package 'avy)
 (avy-setup-default)
+
+(with-eval-after-load 'avy
+  (set-face-attribute 'avy-lead-face nil :background "#BF616A")
+  (set-face-attribute 'avy-lead-face-0 nil :background "#5E81AC")
+  
+  )
 
 (straight-use-package 'drag-stuff)
 (require 'drag-stuff)
@@ -153,10 +161,11 @@
 
 (straight-use-package 'flycheck)
 
-;; (with-eval-after-load 'flycheck
-  ;; (set-face-attribute 'flycheck-error nil :underline))
-  ;; (:color "#BF616A")))
-  ;; (set-face-attribute 'flycheck-info nil :underline (:color "#A3BE8C" :style 'wave)))
+(with-eval-after-load 'flycheck
+  (set-face-attribute 'flycheck-info nil :underline '(:color "#EBCB8B" :style wave))
+  (set-face-attribute 'flycheck-error nil :underline '(:color "#BF616A" :style wave))
+  
+  )
 
 (straight-use-package
   '(nano-emacs :type git :host github :repo "rougier/nano-emacs"))
@@ -320,10 +329,10 @@
 (with-eval-after-load 'company
   (set-face-attribute 'company-tooltip nil :foreground "#5E81AC" :background "#27c12cf13750")
   (set-face-attribute 'company-tooltip-annotation nil :foreground "#4C566A" :background "#27c12cf13750")
-  ;; (set-face-attribute 'company-tooltip-annotation-selection nil :foreground "#4C566A" :background "#A3BE8C")
   (set-face-attribute 'company-tooltip-common-selection nil :foreground "white" :background "#A3BE8C")
-  ;; (set-face-attribute 'company-tooltip-common nil :foreground "#A3BE8C" :background "#27c12cf13750")
   (set-face-attribute 'company-tooltip-selection nil :foreground "white" :background "#434C5E")
+  ;; (set-face-attribute 'company-tooltip-common nil :foreground "#A3BE8C" :background "#27c12cf13750")
+  ;; (set-face-attribute 'company-tooltip-annotation-selection nil :foreground "#4C566A" :background "#A3BE8C")
   )
 
 (with-eval-after-load 'helm
