@@ -84,6 +84,16 @@ As I understand it, packages aren't updated automatically. You'd generally run s
 #+begin_src emacs-lisp
 (set-fringe-mode 0)
 #+end_src
+
+** Visual line mode
+Wraps text like a word editor
+#+begin_src emacs-lisp
+(visual-line-mode t)
+#+end_src
+
+#+begin_src emacs-lisp
+(add-hook 'text-mode-hook 'visual-line-mode)
+#+end_src
 * Editor
 ** Evil
 *** Install
@@ -114,6 +124,20 @@ As I understand it, packages aren't updated automatically. You'd generally run s
 (avy-setup-default)
 #+end_src
 
+** Copilot
+#+begin_src emacs-lisp
+(straight-use-package
+ '(copilot :type git :host github :repo "zerolfx/copilot.el" :files ("dist" "*.el")))
+
+(defun my/copilot-tab ()
+  (interactive)
+  (or (copilot-accept-completion)
+      (indent-for-tab-command)))
+
+(with-eval-after-load 'copilot
+  (evil-define-key 'insert copilot-mode-map
+    (kbd "<tab>") #'my/copilot-tab))
+#+end_src
 
 
 ** Drag Text
@@ -214,9 +238,14 @@ This command removes it
 (straight-use-package 'perspective)
 #+end_src
 
+*** Init
+#+begin_src emacs-lisp
+(persp-mode)
+#+end_src
+
 *** Set default file to save to
 #+begin_src emacs-lisp
-;; (setq persp-state-default-file "~/.emacs.d/perspective/default")
+(setq persp-state-default-file "~/.emacs.d/persp/default")
 #+end_src
 
 ** Vertico & Orderless
@@ -226,37 +255,32 @@ This command removes it
 (which-key-mode)
 #+end_src
 
-* Typescript and Frontend Development
-** Treemacs
-#+begin_src emacs-lisp
-;; (straight-use-package 'treemacs)
-#+end_src
+* Session
 
-** Typescript
-TODO: Javascript doesn't open as typescript
+** Revert all buffers
 #+begin_src emacs-lisp
-(straight-use-package 'typescript-mode)
-(add-to-list 'auto-mode-alist '("\\.tsx\\'" . typescript-mode))
-(add-to-list 'auto-mode-alist '("\\.js\\'" . typescript-mode))
-#+end_src
-
-** Editorconfig
-Reads .editorconfig from root directory
-If you are unhappy with spaces/tabs just create .editorconfig file
-#+begin_src emacs-lisp
-(straight-use-package 'editorconfig)
-(editorconfig-mode 1)
-#+end_src
-
-** Prettier
-No further configuration is needed for it to read from root directory (.prettierrc, etc.)
-#+begin_src emacs-lisp
-(straight-use-package 'prettier)
-#+end_src
-
-** Web mode
-#+begin_src emacs-lisp
-(straight-use-package 'web-mode)
+(defun revert-all-file-buffers ()
+  "Refresh all open file buffers without confirmation.
+Buffers in modified (not yet saved) state in emacs will not be reverted. They
+will be reverted though if they were modified outside emacs.
+Buffers visiting files which do not exist any more or are no longer readable
+will be killed."
+  (interactive)
+  (dolist (buf (buffer-list))
+    (let ((filename (buffer-file-name buf)))
+      ;; Revert only buffers containing files, which are not modified;
+      ;; do not try to revert non-file buffers like *Messages*.
+      (when (and filename
+                 (not (buffer-modified-p buf)))
+        (if (file-readable-p filename)
+            ;; If the file exists and is readable, revert the buffer.
+            (with-current-buffer buf
+              (revert-buffer :ignore-auto :noconfirm :preserve-modes))
+          ;; Otherwise, kill the buffer.
+          (let (kill-buffer-query-functions) ; No query done when killing buffer
+            (kill-buffer buf)
+            (message "Killed non-existing/unreadable file buffer: %s" filename))))))
+  (message "Finished reverting buffers containing unmodified files."))
 #+end_src
 
 * Applications
@@ -330,8 +354,101 @@ See comments (and follow them exactly) for compilation https://github.com/akermu
 
 ** TODO Rest Client
 
+
+* Languages
+** Typescript (and Frontend Development)
+*** Treemacs
+#+begin_src emacs-lisp
+;; (straight-use-package 'treemacs)
+#+end_src
+
+*** Typescript
+TODO: Javascript doesn't open as typescript
+#+begin_src emacs-lisp
+(straight-use-package 'typescript-mode)
+;; (add-to-list 'auto-mode-alist '("\\.tsx\\'" . typescript-mode))
+;; (add-to-list 'auto-mode-alist '("\\.js\\'" . typescript-mode))
+#+end_src
+
+*** Editorconfig
+Reads .editorconfig from root directory
+If you are unhappy with spaces/tabs just create .editorconfig file
+#+begin_src emacs-lisp
+(straight-use-package 'editorconfig)
+(editorconfig-mode 1)
+#+end_src
+
+*** Prettier
+No further configuration is needed for it to read from root directory (.prettierrc, etc.)
+#+begin_src emacs-lisp
+(straight-use-package 'prettier)
+#+end_src
+
+*** Web mode
+#+begin_src emacs-lisp
+(straight-use-package 'web-mode)
+#+end_src
+
+*** Prisma
+#+begin_src emacs-lisp
+;; (straight-use-package 'emacs-prisma-mode)
+(straight-use-package
+ '(emacs-prisma-mode :type git :host github :repo "pimeys/emacs-prisma-mode"))
+#+end_src
+
+*** Tailwind
+
+#+begin_src emacs-lisp
+(straight-use-package
+ '(lsp-tailwindcss :type git :host github :repo "merrickluo/lsp-tailwindcss" ))
+#+end_src
+
+#+begin_src emacs-lisp
+(with-eval-after-load 'lsp-tailwindcss
+  (setq lsp-tailwindcss-add-on-mode t))
+#+end_src
+
+*** tsx mode
+#+begin_src emacs-lisp
+;; (straight-use-package
+;; '(tsx-mode :type git :host github :repo "orzechowskid/tsx-mode.el" :branch "emacs29"))
+#+end_src
+
+** Rust
+#+begin_src emacs-lisp
+(straight-use-package 'rust-mode)
+;; (add-to-list 'auto-mode-alist '("\\.rs\\'" . rust-mode))
+#+end_src
+   
+** Elixir
+#+begin_src emacs-lisp
+(straight-use-package 'elixir-mode)
+#+end_src
+
+*** Smartparens
+#+begin_src emacs-lisp
+(straight-use-package 'smartparens)
+(require 'smartparens-config)
+
+(add-hook 'elixir-mode-hook #'smartparens-mode)
+#+end_src
+
+** Rust 
+
+** Astro
+#+begin_src emacs-lisp
+;; (setq web-mode-enable-front-matter-block t)
+#+end_src
 * IDE
 ** LSP
+Currently ts-ls and deno lsp servers can't coexist. So you need to uninstall typescript globally when using
+deno.
+
+npm un -g typescript-language-server; npm un -g typescript
+
+If uninstalling typescripRemember to clear the cache inside .emacs.d/.cache/lsp
+
+To re-use ts-ls server, simply reinstall globally
 #+begin_src emacs-lisp
 (straight-use-package 'lsp-mode)
 #+end_src
@@ -381,6 +498,7 @@ Note: LSP UI Sideline uses flycheck
 ** Eslint
 
 * Emacs Appearance
+
 ** Nano
 Nano requires you to import the desired theme and after to call the function nano-faces and nano-theme.
 #+begin_src emacs-lisp
@@ -429,6 +547,11 @@ Nano requires you to import the desired theme and after to call the function nan
 #+end_src
 
 ** Helm Ag
+Note to filter by file:
+
+-G<file> <search-term> -GSignForm useNavigate
+<search-term> -G<file> useNavigate -GSignform
+
 #+begin_src emacs-lisp
 (straight-use-package 'helm-ag)
 #+end_src
@@ -594,6 +717,9 @@ Vim doesn't use eol like emacs. However, with emacs you will want to evaluate fu
 (define-key evil-motion-state-map "1" 'evil-first-non-blank-of-visual-line)
 (define-key evil-motion-state-map ";" 'other-window)
 (define-key evil-motion-state-map "f" 'avy-goto-word-1)
+
+(setq avy-timeout-seconds 0.3)
+(define-key evil-motion-state-map "3" 'avy-goto-char-timer)
 #+end_src
 
 *** Vim Keybindings Help
