@@ -3,11 +3,11 @@
 (defvar bootstrap-version)
 (let ((bootstrap-file
        (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
-      (bootstrap-version 5))
+      (bootstrap-version 6))
   (unless (file-exists-p bootstrap-file)
     (with-current-buffer
         (url-retrieve-synchronously
-         "https://raw.githubusercontent.com/raxod502/straight.el/develop/install.el"
+         "https://raw.githubusercontent.com/radian-software/straight.el/develop/install.el"
          'silent 'inhibit-cookies)
       (goto-char (point-max))
       (eval-print-last-sexp)))
@@ -27,6 +27,10 @@
 
 (set-fringe-mode 0)
 
+(visual-line-mode t)
+
+(add-hook 'text-mode-hook 'visual-line-mode)
+
 (setq evil-want-keybinding nil)
 
 (straight-use-package 'evil)
@@ -41,6 +45,18 @@
 
 (straight-use-package 'avy)
 (avy-setup-default)
+
+(straight-use-package
+ '(copilot :type git :host github :repo "zerolfx/copilot.el" :files ("dist" "*.el")))
+
+(defun my/copilot-tab ()
+  (interactive)
+  (or (copilot-accept-completion)
+      (indent-for-tab-command)))
+
+(with-eval-after-load 'copilot
+  (evil-define-key 'insert copilot-mode-map
+    (kbd "<tab>") #'my/copilot-tab))
 
 (straight-use-package 'drag-stuff)
 (require 'drag-stuff)
@@ -91,23 +107,35 @@
 
 (straight-use-package 'perspective)
 
-;; (setq persp-state-default-file "~/.emacs.d/perspective/default")
+(persp-mode)
+
+(setq persp-state-default-file "~/.emacs.d/persp/default")
 
 (straight-use-package 'which-key)
 (which-key-mode)
 
-;; (straight-use-package 'treemacs)
-
-(straight-use-package 'typescript-mode)
-(add-to-list 'auto-mode-alist '("\\.tsx\\'" . typescript-mode))
-(add-to-list 'auto-mode-alist '("\\.js\\'" . typescript-mode))
-
-(straight-use-package 'editorconfig)
-(editorconfig-mode 1)
-
-(straight-use-package 'prettier)
-
-(straight-use-package 'web-mode)
+(defun revert-all-file-buffers ()
+  "Refresh all open file buffers without confirmation.
+Buffers in modified (not yet saved) state in emacs will not be reverted. They
+will be reverted though if they were modified outside emacs.
+Buffers visiting files which do not exist any more or are no longer readable
+will be killed."
+  (interactive)
+  (dolist (buf (buffer-list))
+    (let ((filename (buffer-file-name buf)))
+      ;; Revert only buffers containing files, which are not modified;
+      ;; do not try to revert non-file buffers like *Messages*.
+      (when (and filename
+                 (not (buffer-modified-p buf)))
+        (if (file-readable-p filename)
+            ;; If the file exists and is readable, revert the buffer.
+            (with-current-buffer buf
+              (revert-buffer :ignore-auto :noconfirm :preserve-modes))
+          ;; Otherwise, kill the buffer.
+          (let (kill-buffer-query-functions) ; No query done when killing buffer
+            (kill-buffer buf)
+            (message "Killed non-existing/unreadable file buffer: %s" filename))))))
+  (message "Finished reverting buffers containing unmodified files."))
 
 (straight-use-package 'org)
 (require 'org)
@@ -128,9 +156,49 @@
 
 (setq magit-diff-refine-hunk (quote all))
 
+(setq magit-commit-show-diff nil)
+
 (straight-use-package 'vterm)
 
 (straight-use-package 'multi-vterm)
+
+;; (straight-use-package 'treemacs)
+
+(straight-use-package 'typescript-mode)
+;; (add-to-list 'auto-mode-alist '("\\.tsx\\'" . typescript-mode))
+;; (add-to-list 'auto-mode-alist '("\\.js\\'" . typescript-mode))
+
+(straight-use-package 'editorconfig)
+(editorconfig-mode 1)
+
+(straight-use-package 'prettier)
+
+(straight-use-package 'web-mode)
+
+;; (straight-use-package 'emacs-prisma-mode)
+(straight-use-package
+ '(emacs-prisma-mode :type git :host github :repo "pimeys/emacs-prisma-mode"))
+
+(straight-use-package
+ '(lsp-tailwindcss :type git :host github :repo "merrickluo/lsp-tailwindcss" ))
+
+(with-eval-after-load 'lsp-tailwindcss
+  (setq lsp-tailwindcss-add-on-mode t))
+
+;; (straight-use-package
+;; '(tsx-mode :type git :host github :repo "orzechowskid/tsx-mode.el" :branch "emacs29"))
+
+(straight-use-package 'rust-mode)
+;; (add-to-list 'auto-mode-alist '("\\.rs\\'" . rust-mode))
+
+(straight-use-package 'elixir-mode)
+
+(straight-use-package 'smartparens)
+(require 'smartparens-config)
+
+(add-hook 'elixir-mode-hook #'smartparens-mode)
+
+;; (setq web-mode-enable-front-matter-block t)
 
 (straight-use-package 'lsp-mode)
 
@@ -309,6 +377,9 @@
 (define-key evil-motion-state-map ";" 'other-window)
 (define-key evil-motion-state-map "f" 'avy-goto-word-1)
 
+(setq avy-timeout-seconds 0.3)
+(define-key evil-motion-state-map "3" 'avy-goto-char-timer)
+
 (defun copy-full-path-to-kill-ring ()
   "copy buffer's full path to kill ring"
   (interactive)
@@ -416,10 +487,3 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(helm-M-x-key ((t (:extend t :foreground "#434C5E")))))
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(helm-minibuffer-history-key "M-p")
- '(magit-commit-show-diff nil))
