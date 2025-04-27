@@ -1,0 +1,513 @@
+#TITLE: Emacs
+#+PROPERTY: header-args :tangle init.el
+
+* Help
+** Tangle file
+org-babel-tangle
+** Create block templates
+<el<tab> (ensure that you don't have a closing tag [>] at the end of template block)
+** To delete indentation in blocks
+delete-horizontal-white space
+** Autoformat
+indent-region
+** To edit blocks
+C-c '
+
+* Setup (non-emacs)
+** To change caps-lock to escape: Preferences -> Keyboard -> Modifier Keys
+
+** Package
+#+begin_src emacs-lisp
+(require 'package)
+(setq package-archives
+      '(("melpa" . "https://melpa.org/packages/")
+        ("gnu" . "https://elpa.gnu.org/packages/")))
+(package-initialize)
+
+(unless package-archive-contents
+  (package-refresh-contents))
+
+;; Critical for use-package to auto-install!
+(unless (package-installed-p 'use-package)
+  (package-install 'use-package))
+(require 'use-package)
+
+(setq use-package-always-ensure t)
+#+end_src
+
+* Basic
+Emacs can find your terminal environment and terminal
+#+begin_src emacs-lisp
+(use-package exec-path-from-shell
+  :if (memq window-system '(mac ns x))
+  :config
+  (exec-path-from-shell-initialize))
+#+end_src
+
+* Defaults
+** Disable GUI elements
+#+begin_src emacs-lisp
+(menu-bar-mode -1)    ;; Disable the top "File/Edit/Options/Help" menu
+(tool-bar-mode -1)    ;; Disable the icon toolbar (save, open, scissors icons)
+(scroll-bar-mode -1)  ;; Disable the scrollbars on the side
+(set-fringe-mode 0)   ;; Disable side fringes (optional, for absolute minimalism)
+#+end_src
+
+** Top file
+#+begin_src emacs-lisp
+  (setq frame-title-format nil) 
+(setq ns-use-proxy-icon nil) 
+#+end_src
+
+** Disable bell sound
+#+begin_src emacs-lisp
+(setq ring-bell-function 'ignore)
+#+end_src
+
+** Don't auto save
+#+begin_src emacs-lisp
+(setq auto-save-default nil)
+#+end_src
+
+** Don't create back up files
+#+begin_src emacs-lisp
+(setq make-backup-files nil)
+#+end_src
+
+** Don't create lock files
+#+begin_src emacs-lisp
+(setq create-lockfiles nil)
+#+end_src
+
+** Remove fringe
+#+begin_src emacs-lisp
+(set-fringe-mode 0)
+#+end_src
+
+** Visual line mode
+Wraps text like a word editor
+#+begin_src emacs-lisp
+(visual-line-mode t)
+#+end_src
+
+** Nord theme
+#+begin_src emacs-lisp
+  (use-package nord-theme
+    :ensure t)
+
+  (load-theme 'nord t)
+#+end_src
+
+** Font
+*** Font family
+#+begin_src emacs-lisp
+(set-face-attribute 'default nil
+                    :family "SF Mono"
+                    :height 130
+                    :weight 'normal
+                    :width 'normal)
+#+end_src
+
+** Title Bar
+*** Make title bar same color as background
+#+begin_src emacs-lisp
+(add-to-list 'default-frame-alist '(ns-transparent-titlebar . t))
+#+end_src
+
+** Line Spacing
+#+begin_src emacs-lisp
+(setq-default line-spacing 2)
+#+end_src
+
+* Org
+
+** Setup
+#+begin_src emacs-lisp
+(use-package org
+  :config
+  ;; Make sure source blocks are fontified
+  (setq org-src-fontify-natively t)
+  (setq org-src-tab-acts-natively t)
+
+  ;; Set background color for code block contents
+  (set-face-attribute 'org-block nil :background "#1E222A")
+
+  ;; Optionally set the block marker lines too (begin_src, end_src)
+  (set-face-attribute 'org-block-begin-line nil :background "#2E3440" :foreground "#5E81AC" :extend t)
+  (set-face-attribute 'org-block-end-line   nil :background "#2E3440" :foreground "#5E81AC" :extend t))
+#+end_src
+
+** Org bullets
+#+begin_src emacs-lisp
+
+(use-package org-bullets
+  :ensure t
+  :hook (org-mode . org-bullets-mode))
+#+end_src
+
+** Org templates 
+#+begin_src emacs-lisp
+(require 'org-tempo)
+
+(add-to-list 'org-structure-template-alist '("el" . "src emacs-lisp"))
+#+end_src
+
+* Completion
+#+begin_src emacs-lisp
+  ;; Vertico - Vertical completion UI
+  (use-package vertico
+    :ensure t
+    :init
+    (vertico-mode 1))
+
+  ;; Marginalia - Show annotations (like file size, buffer info)
+  (use-package marginalia
+    :ensure t
+    :after vertico
+    :init
+    (marginalia-mode 1))
+
+  ;; Consult - Search, M-x, switch buffers, find files, ripgrep, etc.
+  (use-package consult
+    :ensure t
+    :after vertico)
+
+  ;; Orderless - Advanced flexible matching
+  (use-package orderless
+    :ensure t
+    :init
+    (setq completion-styles '(orderless basic)
+          completion-category-defaults nil
+          completion-category-overrides '((file (styles partial-completion)))))
+#+end_src
+
+** Find File Go back Directory
+#+begin_src emacs-lisp
+(with-eval-after-load 'vertico
+  (define-key vertico-map (kbd "C-l") #'vertico-directory-up)) 
+#+end_src
+
+
+** Vertico Show All Files
+#+begin_src emacs-lisp
+(use-package vertico
+  :ensure t
+  :init
+  (vertico-mode)
+  :custom
+  (vertico-cycle t)             ;; Allow cycling through candidates
+  (vertico-resize nil)          ;; <<< Disable auto resize
+  (vertico-count 20))           ;; <<< Show 20 items always
+#+end_src
+
+** Disable dired
+
+* Minibuffer Navigation for Files
+#+begin_src emacs-lisp
+(with-eval-after-load 'vertico
+  ;; When inside find-file
+  (define-key vertico-map (kbd "C-l") #'vertico-directory-up) ;; Go up directory
+  (define-key vertico-map (kbd "C-h") #'vertico-directory-delete-char) ;; Delete char
+  (define-key vertico-map (kbd "RET") #'vertico-directory-enter)) ;; Enter directory
+
+(defun vertico-directory-enter ()
+  "Enter the selected directory or open file."
+  (interactive)
+  (if (file-directory-p (vertico--candidate))
+      (vertico-insert (concat (vertico--candidate) "/"))
+    (vertico-exit)))
+#+end_src
+
+
+
+
+* Evil 
+Actual setup in Keybindings
+#+begin_src emacs-lisp
+  ;; Evil Core
+  (use-package evil
+    :init
+    (setq evil-want-keybinding nil)
+    :config
+    (evil-mode 1))
+
+  ;; Evil Collection (extra Evil bindings for other modes)
+  (use-package evil-collection
+    :after evil
+    :config
+    (evil-collection-init))
+
+#+end_src
+
+* Keybindings
+** General
+These must be grouped together unfortunately
+#+begin_src emacs-lisp
+(use-package general
+  :after (evil consult)
+  :config
+  (general-evil-setup t)
+
+  ;; Main Leader Key
+  (general-create-definer jonroby/leader-keys
+    :prefix "SPC"
+    :keymaps 'override
+    :states '(normal visual motion))
+
+  ;; Reserve sub-prefixes
+  (jonroby/leader-keys
+    "e" '(:ignore t :which-key "emacs commands")
+    "w" '(:ignore t :which-key "window management")
+    "c" '(:ignore t :which-key "code folding")
+    "b" '(:ignore t :which-key "buffer management"))
+
+  ;; Top-level SPC bindings
+  (jonroby/leader-keys
+    "a" 'save-buffer 
+    "." 'consult-buffer
+    "/" 'find-file 
+    "s" 'consult-line
+    "p" 'project-switch-project
+    "f" 'project-find-file) 
+
+  ;; Code folding under SPC c
+  (jonroby/leader-keys
+    "c h" 'hs-hide-block
+    "c s" 'hs-show-block)
+
+  ;; Window management under SPC w
+  (jonroby/leader-keys
+    "w j" 'split-window-below
+    "w l" 'split-window-right
+    "w d" 'delete-window)
+
+  ;; Define switch-to-last-buffer function
+  (defun switch-to-last-buffer ()
+    (interactive)
+    (switch-to-buffer nil))
+
+  ;; Buffer navigation under SPC b
+  (jonroby/leader-keys
+    "b a" 'save-buffer
+    "b j" 'previous-buffer
+    "b k" 'next-buffer
+    "b l" 'switch-to-last-buffer
+    "b b" 'switch-to-buffer
+    "b d" 'kill-buffer)
+
+  ;; Emacs commands under SPC e
+  (jonroby/leader-keys
+    "e q" 'save-buffers-kill-terminal
+    "e e" 'execute-extended-command
+    "e y" 'consult-yank-pop
+    "e r" 'eval-last-sexp
+    "e i" '(lambda () (interactive) (find-file "~/.emacs.d/emacs.org"))))
+#+end_src
+** Which Key
+#+begin_src emacs-lisp
+(use-package which-key
+  :ensure t
+  :config
+  (which-key-mode 1)) 
+#+end_src
+
+** Evil
+*** Global
+#+begin_src emacs-lisp
+(evil-define-key '(normal visual) 'global (kbd ",") 'evil-scroll-down)
+(evil-define-key '(normal visual) 'global (kbd ".") 'evil-scroll-up)
+
+(evil-define-key '(normal) 'global (kbd "<DEL>") 'delete-backward-char)
+(evil-define-key '(normal) 'global (kbd "M-n") 'drag-stuff-down)
+(evil-define-key '(normal) 'global (kbd "M-p") 'drag-stuff-up)
+(evil-define-key '(normal) 'global (kbd "C-o") 'open-line)
+(evil-define-key '(normal) 'global (kbd "M-o") 'delete-blank-lines)
+#+end_src
+
+*** Motion
+**** Move to last char on line for emacs
+Vim doesn't use eol like emacs. However, with emacs you will want to evaluate functions and highlight, which requires you to be on eol and not on the last char.
+#+begin_src emacs-lisp
+(setq evil-move-beyond-eol ())
+#+end_src
+
+**** Function to go to last non blank character
+#+begin_src emacs-lisp
+(evil-define-motion evil-last-non-blank (count)
+  "Move the cursor to the last non-blank character
+  on the current line. If COUNT is given, move COUNT - 1
+  lines downward first."
+  :type inclusive
+  (evil-end-of-line count)
+  (re-search-backward "^\\|[^[:space:]]")
+  (setq evil-this-type (if (eolp) 'exclusive 'inclusive)))
+#+end_src
+
+**** Keybindings
+#+begin_src emacs-lisp
+;; (define-key evil-motion-state-map "g-" 'evil-end-of-line) Delete by Oct 31 2022 if not used
+;; (define-key evil-motion-state-map "-" 'evil-last-non-blank)
+;; (define-key evil-motion-state-map "-" 'evil-append-line)
+
+;; Bind the custom function directly
+(define-key evil-motion-state-map "-" 'evil-append-line)
+(define-key evil-visual-state-map "-" 'evil-last-non-blank)
+
+(define-key evil-motion-state-map "1" 'evil-first-non-blank-of-visual-line)
+(define-key evil-motion-state-map ";" 'other-window)
+(define-key evil-motion-state-map "f" 'avy-goto-word-1)
+
+(setq avy-timeout-seconds 0.3)
+(define-key evil-motion-state-map "3" 'avy-goto-char-timer)
+#+end_src
+*** Surround
+#+begin_src emacs-lisp
+  ;; Evil Surround (surround text objects with parens, quotes, etc.)
+  (use-package evil-surround
+    :after evil
+    :config
+    (global-evil-surround-mode 1))
+
+#+end_src
+
+*** Vim Keybindings Help
+
+**** ma - set mark
+**** `a jump to mark a
+**** `` - go to position before last jump
+**** `. - last change
+
+**** H - move to top of screen
+**** M - move to middle of screen
+**** L - move to bottom of screen
+**** zz - center char on screen
+
+**** A - Insert at end of line
+**** I - Insert at beginning of line
+**** o - Insert at next line
+**** O - Insert at top line
+
+**** Ctrl-o - insert line below 
+**** Meta-o - insert line above 
+
+**** E - move to end of word (with punctuation)
+Alternate way but left effective: vt<space>
+**** B - move to start of word (with punctuation)
+
+**** % move to matching char
+**** <n>gg - go to line number
+**** [ ] - go to next keyword?
+**** { } - go to previous, next paragraph
+
+**** J - join line below to current one with one space between (gJ without space)
+**** Visual mode
+***** < > - shift text left right
+***** u / U - change to lower, upper case
+***** S<symbol> - adds symbol arround selected block
+**** ds<symbol> - delete surrounding (non-visual)
+ 
+
+* Corfu
+#+begin_src emacs-lisp
+(use-package corfu
+  :ensure t
+  :init
+  (global-corfu-mode)
+  :config
+  (corfu-popupinfo-mode 1))
+#+end_src
+
+* Terminal
+** Vterm
+brew install cmake libtool  
+If you receive prompt to compile, it might not recognize cmake.  
+See comments (and follow them exactly) for compilation https://github.com/akermu/emacs-libvterm/issues/169#issuecomment-568668946  
+
+#+begin_src emacs-lisp
+(use-package vterm
+  :ensure t)
+#+end_src
+
+**** Send command to vterm
+#+begin_src emacs-lisp
+(defun my/vterm-execute-current-line ()
+  "Insert text of current line in vterm and execute."
+  (interactive)
+  (require 'vterm)
+  (eval-when-compile (require 'subr-x))
+  (let ((command (string-trim (buffer-substring
+                               (save-excursion (beginning-of-line) (point))
+                               (save-excursion (end-of-line) (point))))))
+    (let ((buf (current-buffer)))
+      (unless (get-buffer vterm-buffer-name)
+        (vterm))
+      (display-buffer vterm-buffer-name t)
+      (switch-to-buffer-other-window vterm-buffer-name)
+      (vterm--goto-line -1)
+      (message command)
+      (vterm-send-string command)
+      (vterm-send-return)
+      (switch-to-buffer-other-window buf))))
+#+end_src
+
+** Multi Vterm
+#+begin_src emacs-lisp
+(use-package multi-vterm
+  :ensure t)
+#+end_src
+
+* Languages 
+
+** Lean
+#+begin_src emacs-lisp
+ (use-package lean4-mode
+  :commands lean4-mode
+  :vc (:url "https://github.com/leanprover-community/lean4-mode.git"
+       :rev :last-release
+       ;; Or, if you prefer the bleeding edge version of Lean4-Mode:
+       ;; :rev :newest
+       )) 
+#+end_src
+
+** Haskell
+#+begin_src emacs-lisp
+(use-package haskell-mode
+  :ensure t
+  :mode ("\\.hs\\'" . haskell-mode)) 
+#+end_src
+
+** C / C++
+#+begin_src emacs-lisp
+(use-package clang-format
+  :ensure t)
+
+(add-hook 'c-mode-common-hook
+          (lambda ()
+            (add-hook 'before-save-hook 'clang-format-buffer nil 'local)))
+#+end_src
+
+** Python
+#+begin_src emacs-lisp
+(use-package python
+  :hook ((python-mode . highlight-indent-guides-mode)
+         (python-mode . display-line-numbers-mode)
+         (python-mode . hs-minor-mode)))
+#+end_src
+
+
+* Miscellaneous
+
+** Escape
+#+begin_src emacs-lisp
+(define-key key-translation-map (kbd "ESC") (kbd "C-g"))
+#+end_src
+
+** Copy full path to kill ring
+#+begin_src emacs-lisp
+(defun copy-full-path-to-kill-ring ()
+  "copy buffer's full path to kill ring"
+  (interactive)
+  (when buffer-file-name
+    (kill-new (file-truename buffer-file-name))))
+
+(global-set-key (kbd "C-c y") 'copy-full-path-to-kill-ring)
