@@ -2,7 +2,7 @@
 (setq package-archives
       '(("melpa" . "https://melpa.org/packages/")
         ("gnu" . "https://elpa.gnu.org/packages/")))
-(package-initialize)
+
 
 (unless package-archive-contents
   (package-refresh-contents))
@@ -18,6 +18,51 @@
   :if (memq window-system '(mac ns x))
   :config
   (exec-path-from-shell-initialize))
+
+(use-package mini-frame
+ :ensure t) 
+
+
+
+(customize-set-variable 'mini-frame-resize 'fit-content)
+
+(add-to-list 'load-path "~/.emacs.d/nano-emacs") 
+
+  (require 'nano)
+  (require 'nano-theme-dark)
+
+  (require 'nano-colors) 
+
+  (require 'nano-faces)
+
+
+  (nano-faces)
+  (nano-theme) 
+
+
+  ;;(defface nano-faded
+   ;; '((t (:foreground "black")))  ;; A typical faded gray color
+
+    ;; :group 'nano-faces) 
+  ;; (require 'nano-minibuffer) 
+
+
+;; (setq mini-frame-default-height 20)  ;; Taller frame for more completions
+;; (setq mini-frame-create-lazy t)
+;; (setq mini-frame-resize t)
+
+;; Add padding and border improvements
+;; (customize-set-variable 'mini-frame-internal-border-width 10)
+;; (setq mini-frame-resize-min-height 10)
+
+;; Custom faces for better appearance
+(custom-set-faces
+ '(nano-minibuffer-face ((t (:background "#2a2f38" :foreground "#e6e6e6"))))
+ '(nano-minibuffer-header-face ((t (:background "#343d46" :foreground "#a7cfa3" :height 1.1 :weight bold))))
+ '(completions-common-part ((t (:foreground "#7cb7ff"))))
+ '(file-name-shadow ((t (:foreground "#889099")))))
+  
+ ;;  (nano-minibuffer-mode 1)
 
 (menu-bar-mode -1)    ;; Disable the top "File/Edit/Options/Help" menu
 (tool-bar-mode -1)    ;; Disable the icon toolbar (save, open, scissors icons)
@@ -38,11 +83,6 @@
 (set-fringe-mode 0)
 
 (visual-line-mode t)
-
-(use-package nord-theme
-  :ensure t)
-
-(load-theme 'nord t)
 
 (set-face-attribute 'default nil
                     :family "SF Mono"
@@ -139,6 +179,34 @@
   :config
   (evil-collection-init))
 
+(use-package avy
+  :ensure t
+  :config
+  (avy-setup-default))
+
+(use-package drag-stuff
+  :ensure t
+  :commands (drag-stuff-mode drag-stuff-global-mode)
+  :config
+  ;; Enable if you want globally
+  ;; (drag-stuff-global-mode 1)
+  )
+
+(use-package iedit
+  :ensure t)
+
+(use-package evil-multiedit
+  :ensure t
+  :after (evil iedit)
+  :config
+  (evil-multiedit-default-keybinds))
+
+(use-package evil-multiedit
+  :ensure t
+  :after evil
+  :config
+  (evil-multiedit-default-keybinds))
+
 (use-package general
   :after (evil consult)
   :config
@@ -155,7 +223,8 @@
     "e" '(:ignore t :which-key "emacs commands")
     "w" '(:ignore t :which-key "window management")
     "c" '(:ignore t :which-key "code folding")
-    "b" '(:ignore t :which-key "buffer management"))
+    "p" '(:ignore t :which-key "project management") 
+    "b" '(:ignore t :which-key "buffer management")) 
 
   ;; Top-level SPC bindings
   (jonroby/leader-keys
@@ -163,8 +232,7 @@
     "." 'consult-buffer
     "/" 'find-file 
     "s" 'consult-line
-    "p" 'project-switch-project
-    "f" 'project-find-file) 
+   ) 
 
   ;; Code folding under SPC c
   (jonroby/leader-keys
@@ -176,6 +244,12 @@
     "w j" 'split-window-below
     "w l" 'split-window-right
     "w d" 'delete-window)
+
+  ;; Window management under SPC w
+  (jonroby/leader-keys
+    "p s" 'project-find-regexp
+    "p f" 'project-find-file
+    ) 
 
   ;; Define switch-to-last-buffer function
   (defun switch-to-last-buffer ()
@@ -198,6 +272,13 @@
     "e y" 'consult-yank-pop
     "e r" 'eval-last-sexp
     "e i" '(lambda () (interactive) (find-file "~/.emacs.d/emacs.org"))))
+
+(jonroby/leader-keys
+    "l" '(:ignore t :which-key "language server")
+    "l h" '(eglot-hover :which-key "hover info")
+    "l d" '(flymake-show-diagnostics-buffer :which-key "diagnostics")
+    "l g" '(xref-find-definitions :which-key "go to definition")
+    "l r" '(xref-find-references :which-key "find references"))
 
 (use-package which-key
   :ensure t
@@ -245,6 +326,8 @@
   :config
   (global-evil-surround-mode 1))
 
+
+
 (use-package corfu
   :ensure t
   :init
@@ -278,8 +361,16 @@
   :ensure t)
 
 (use-package lean4-mode
-  :straight (lean4-mode :type git :host github :repo "leanprover-community/lean4-mode")
-  :mode ("\\.lean\\'" . lean4-mode))
+ :commands lean4-mode
+ :vc (:url "https://github.com/leanprover-community/lean4-mode.git"
+      :rev :last-release
+      ;; Or, if you prefer the bleeding edge version of Lean4-Mode:
+      ;; :rev :newest
+      ))
+
+(with-eval-after-load 'eglot
+ (add-to-list 'eglot-server-programs
+              '(lean4-mode . ("lake" "serve"))))
 
 (use-package haskell-mode
   :ensure t
@@ -294,29 +385,25 @@
 
 (use-package python
   :hook ((python-mode . highlight-indent-guides-mode)
-         (python-mode . display-line-numbers-mode)
+         (python-mode . display-line-numbers-mode) 
          (python-mode . hs-minor-mode)))
 
 (define-key key-translation-map (kbd "ESC") (kbd "C-g"))
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(package-selected-packages
-   '(clang-format company consult corfu elixir-mode evil-collection
-		  evil-surround exec-path-from-shell flycheck
-		  geiser-racket general haskell-mode helm-ag
-		  helm-projectile helm-swoop lean4-mode lsp-treemacs
-		  lsp-ui magit marginalia multi-vterm nord-theme
-		  orderless org-bullets prettier py-autopep8
-		  racket-mode rust-mode typescript-mode vertico))
- '(package-vc-selected-packages
-   '((lean4-mode :url
-		 "https://github.com/leanprover-community/lean4-mode.git"))))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- )
+
+(use-package highlight-indent-guides
+  :ensure t
+  :hook ((haskell-mode . highlight-indent-guides-mode)
+         (lean4-mode . highlight-indent-guides-mode)
+         (python-mode . highlight-indent-guides-mode))
+  :custom
+  (highlight-indent-guides-method 'character))
+
+(defun copy-full-path-to-kill-ring ()
+  "copy buffer's full path to kill ring"
+  (interactive)
+  (when buffer-file-name
+    (kill-new (file-truename buffer-file-name))))
+
+(global-set-key (kbd "C-c y") 'copy-full-path-to-kill-ring)
+
+

@@ -22,7 +22,7 @@ C-c '
 (setq package-archives
       '(("melpa" . "https://melpa.org/packages/")
         ("gnu" . "https://elpa.gnu.org/packages/")))
-(package-initialize)
+
 
 (unless package-archive-contents
   (package-refresh-contents))
@@ -43,6 +43,66 @@ Emacs can find your terminal environment and terminal
   :config
   (exec-path-from-shell-initialize))
 #+end_src
+
+* Nano-Emacs
+
+** Dependencies
+*** Mini Frame Setup
+#+begin_src emacs-lisp
+  (use-package mini-frame
+   :ensure t) 
+
+
+
+  (customize-set-variable 'mini-frame-resize 'fit-content) 
+
+#+end_src
+
+#+begin_src emacs-lisp
+  (add-to-list 'load-path "~/.emacs.d/nano-emacs") 
+
+  (require 'nano)
+  (require 'nano-theme-dark)
+
+  (require 'nano-colors) 
+
+  (require 'nano-faces)
+
+
+  (nano-faces)
+  (nano-theme) 
+
+
+  ;;(defface nano-faded
+   ;; '((t (:foreground "black")))  ;; A typical faded gray color
+
+    ;; :group 'nano-faces) 
+  ;; (require 'nano-minibuffer) 
+
+
+;; (setq mini-frame-default-height 20)  ;; Taller frame for more completions
+;; (setq mini-frame-create-lazy t)
+;; (setq mini-frame-resize t)
+
+;; Add padding and border improvements
+;; (customize-set-variable 'mini-frame-internal-border-width 10)
+;; (setq mini-frame-resize-min-height 10)
+
+;; Custom faces for better appearance
+(custom-set-faces
+ '(nano-minibuffer-face ((t (:background "#2a2f38" :foreground "#e6e6e6"))))
+ '(nano-minibuffer-header-face ((t (:background "#343d46" :foreground "#a7cfa3" :height 1.1 :weight bold))))
+ '(completions-common-part ((t (:foreground "#7cb7ff"))))
+ '(file-name-shadow ((t (:foreground "#889099")))))
+  
+ ;;  (nano-minibuffer-mode 1) 
+
+
+
+#+end_src
+
+
+
 
 * Defaults
 ** Disable GUI elements
@@ -88,14 +148,6 @@ Emacs can find your terminal environment and terminal
 Wraps text like a word editor
 #+begin_src emacs-lisp
 (visual-line-mode t)
-#+end_src
-
-** Nord theme
-#+begin_src emacs-lisp
-  (use-package nord-theme
-    :ensure t)
-
-  (load-theme 'nord t)
 #+end_src
 
 ** Font
@@ -200,9 +252,9 @@ Wraps text like a word editor
   (vertico-count 20))           ;; <<< Show 20 items always
 #+end_src
 
-** Disable dired
 
-* Minibuffer Navigation for Files
+
+** Minibuffer Navigation for Files
 #+begin_src emacs-lisp
 (with-eval-after-load 'vertico
   ;; When inside find-file
@@ -219,6 +271,7 @@ Wraps text like a word editor
 #+end_src
 
 
+ 
 
 
 * Evil 
@@ -239,69 +292,129 @@ Actual setup in Keybindings
 
 #+end_src
 
+
+* Editing
+** Avy
+#+begin_src emacs-lisp
+(use-package avy
+  :ensure t
+  :config
+  (avy-setup-default))
+#+end_src
+
+** Drag Stuff
+#+begin_src emacs-lisp
+(use-package drag-stuff
+  :ensure t
+  :commands (drag-stuff-mode drag-stuff-global-mode)
+  :config
+  ;; Enable if you want globally
+  ;; (drag-stuff-global-mode 1)
+  )
+#+end_src
+
+** Evil Multiedit (Multiple Cursors)
+*** Iedit (dependency for Evil Multiedit)
+#+begin_src emacs-lisp
+(use-package iedit
+  :ensure t) 
+#+end_src
+
+*** Evil Multiedit (Multiple Cursors)
+#+begin_src emacs-lisp
+(use-package evil-multiedit
+  :ensure t
+  :after (evil iedit)
+  :config
+  (evil-multiedit-default-keybinds))
+#+end_src
+
+
+
+#+begin_src emacs-lisp
+(use-package evil-multiedit
+  :ensure t
+  :after evil
+  :config
+  (evil-multiedit-default-keybinds))
+#+end_src
+
 * Keybindings
 ** General
 These must be grouped together unfortunately
 #+begin_src emacs-lisp
-(use-package general
-  :after (evil consult)
-  :config
-  (general-evil-setup t)
+  (use-package general
+    :after (evil consult)
+    :config
+    (general-evil-setup t)
 
-  ;; Main Leader Key
-  (general-create-definer jonroby/leader-keys
-    :prefix "SPC"
-    :keymaps 'override
-    :states '(normal visual motion))
+    ;; Main Leader Key
+    (general-create-definer jonroby/leader-keys
+      :prefix "SPC"
+      :keymaps 'override
+      :states '(normal visual motion))
 
-  ;; Reserve sub-prefixes
+    ;; Reserve sub-prefixes
+    (jonroby/leader-keys
+      "e" '(:ignore t :which-key "emacs commands")
+      "w" '(:ignore t :which-key "window management")
+      "c" '(:ignore t :which-key "code folding")
+      "p" '(:ignore t :which-key "project management") 
+      "b" '(:ignore t :which-key "buffer management")) 
+
+    ;; Top-level SPC bindings
+    (jonroby/leader-keys
+      "a" 'save-buffer 
+      "." 'consult-buffer
+      "/" 'find-file 
+      "s" 'consult-line
+     ) 
+
+    ;; Code folding under SPC c
+    (jonroby/leader-keys
+      "c h" 'hs-hide-block
+      "c s" 'hs-show-block)
+
+    ;; Window management under SPC w
+    (jonroby/leader-keys
+      "w j" 'split-window-below
+      "w l" 'split-window-right
+      "w d" 'delete-window)
+
+    ;; Window management under SPC w
+    (jonroby/leader-keys
+      "p s" 'project-find-regexp
+      "p f" 'project-find-file
+      ) 
+
+    ;; Define switch-to-last-buffer function
+    (defun switch-to-last-buffer ()
+      (interactive)
+      (switch-to-buffer nil))
+
+    ;; Buffer navigation under SPC b
+    (jonroby/leader-keys
+      "b a" 'save-buffer
+      "b j" 'previous-buffer
+      "b k" 'next-buffer
+      "b l" 'switch-to-last-buffer
+      "b b" 'switch-to-buffer
+      "b d" 'kill-buffer)
+
+    ;; Emacs commands under SPC e
+    (jonroby/leader-keys
+      "e q" 'save-buffers-kill-terminal
+      "e e" 'execute-extended-command
+      "e y" 'consult-yank-pop
+      "e r" 'eval-last-sexp
+      "e i" '(lambda () (interactive) (find-file "~/.emacs.d/emacs.org"))))
+
   (jonroby/leader-keys
-    "e" '(:ignore t :which-key "emacs commands")
-    "w" '(:ignore t :which-key "window management")
-    "c" '(:ignore t :which-key "code folding")
-    "b" '(:ignore t :which-key "buffer management"))
-
-  ;; Top-level SPC bindings
-  (jonroby/leader-keys
-    "a" 'save-buffer 
-    "." 'consult-buffer
-    "/" 'find-file 
-    "s" 'consult-line
-    "p" 'project-switch-project
-    "f" 'project-find-file) 
-
-  ;; Code folding under SPC c
-  (jonroby/leader-keys
-    "c h" 'hs-hide-block
-    "c s" 'hs-show-block)
-
-  ;; Window management under SPC w
-  (jonroby/leader-keys
-    "w j" 'split-window-below
-    "w l" 'split-window-right
-    "w d" 'delete-window)
-
-  ;; Define switch-to-last-buffer function
-  (defun switch-to-last-buffer ()
-    (interactive)
-    (switch-to-buffer nil))
-
-  ;; Buffer navigation under SPC b
-  (jonroby/leader-keys
-    "b a" 'save-buffer
-    "b j" 'previous-buffer
-    "b k" 'next-buffer
-    "b l" 'switch-to-last-buffer
-    "b b" 'switch-to-buffer
-    "b d" 'kill-buffer)
-
-  ;; Emacs commands under SPC e
-  (jonroby/leader-keys
-    "e q" 'save-buffers-kill-terminal
-    "e e" 'execute-extended-command
-    "e y" 'consult-yank-pop
-    "e r" 'eval-last-sexp
-    "e i" '(lambda () (interactive) (find-file "~/.emacs.d/emacs.org"))))
+      "l" '(:ignore t :which-key "language server")
+      "l h" '(eglot-hover :which-key "hover info")
+      "l d" '(flymake-show-diagnostics-buffer :which-key "diagnostics")
+      "l g" '(xref-find-definitions :which-key "go to definition")
+      "l r" '(xref-find-references :which-key "find references")) 
 #+end_src
 ** Which Key
 #+begin_src emacs-lisp
@@ -405,7 +518,11 @@ Alternate way but left effective: vt<space>
 ***** u / U - change to lower, upper case
 ***** S<symbol> - adds symbol arround selected block
 **** ds<symbol> - delete surrounding (non-visual)
- 
+
+** Comments
+#+begin_src emacs-lisp
+  
+#+end_src
 
 * Corfu
 #+begin_src emacs-lisp
@@ -469,6 +586,15 @@ See comments (and follow them exactly) for compilation https://github.com/akermu
        )) 
 #+end_src
 
+** Disable Headerline
+#+begin_src emacs-lisp
+ (with-eval-after-load 'eglot
+  (add-to-list 'eglot-server-programs
+               '(lean4-mode . ("lake" "serve")))) 
+
+    
+#+end_src
+
 ** Haskell
 #+begin_src emacs-lisp
 (use-package haskell-mode
@@ -490,9 +616,13 @@ See comments (and follow them exactly) for compilation https://github.com/akermu
 #+begin_src emacs-lisp
 (use-package python
   :hook ((python-mode . highlight-indent-guides-mode)
-         (python-mode . display-line-numbers-mode)
-         (python-mode . hs-minor-mode)))
+         (python-mode . display-line-numbers-mode) 
+         (python-mode . hs-minor-mode)))  
 #+end_src
+
+
+
+
 
 
 * Miscellaneous
@@ -501,6 +631,17 @@ See comments (and follow them exactly) for compilation https://github.com/akermu
 #+begin_src emacs-lisp
 (define-key key-translation-map (kbd "ESC") (kbd "C-g"))
 #+end_src
+
+#+begin_src emacs-lisp
+(use-package highlight-indent-guides
+  :ensure t
+  :hook ((haskell-mode . highlight-indent-guides-mode)
+         (lean4-mode . highlight-indent-guides-mode)
+         (python-mode . highlight-indent-guides-mode))
+  :custom
+  (highlight-indent-guides-method 'character)) 
+#+end_src
+
 
 ** Copy full path to kill ring
 #+begin_src emacs-lisp
@@ -511,3 +652,10 @@ See comments (and follow them exactly) for compilation https://github.com/akermu
     (kill-new (file-truename buffer-file-name))))
 
 (global-set-key (kbd "C-c y") 'copy-full-path-to-kill-ring)
+#+end_src
+
+** Folders
+#+begin_src emacs-lisp
+ 
+#+end_src
+
