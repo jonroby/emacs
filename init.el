@@ -97,8 +97,8 @@
 (use-package org
   :config
   ;; Make sure source blocks are fontified
-  (setq org-src-fontify-natively t)
-  (setq org-src-tab-acts-natively t)
+  ;; (setq org-src-fontify-natively t)
+  ;; (setq org-src-tab-acts-natively t)
 
   ;; Set background color for code block contents
   (set-face-attribute 'org-block nil :background "#1E222A")
@@ -114,6 +114,10 @@
 (require 'org-tempo)
 
 (add-to-list 'org-structure-template-alist '("el" . "src emacs-lisp"))
+
+;; (setq org-src-tab-acts-natively nil)
+
+(setq org-src-preserve-indentation t)
 
 ;; Vertico - Vertical completion UI
 (use-package vertico
@@ -332,6 +336,9 @@
   :ensure t
   :init
   (global-corfu-mode)
+  :custom
+  (corfu-auto t)
+  (corfu-auto-prefix 1)
   :config
   (corfu-popupinfo-mode 1))
 
@@ -360,6 +367,59 @@
 (use-package multi-vterm
   :ensure t)
 
+(setq treesit-language-source-alist
+        '((python     . ("https://github.com/tree-sitter/tree-sitter-python"))
+        ;; (haskell  . ("https://github.com/tree-sitter/tree-sitter-haskell"))
+        ;; (scheme   . ("https://github.com/6cdh/tree-sitter-scheme"))
+        ;; (lean     . ("https://github.com/Julian/tree-sitter-lean"))
+        ;; (rust     . ("https://github.com/tree-sitter/tree-sitter-rust"))
+        ;; (elixir   . ("https://github.com/elixir-lang/tree-sitter-elixir"))
+        ;; (javascript . ("https://github.com/tree-sitter/tree-sitter-javascript"))
+        ;; (typescript . ("https://github.com/tree-sitter/tree-sitter-typescript" :subdir "typescript/src"))
+        ;; (tsx        . ("https://github.com/tree-sitter/tree-sitter-typescript" :subdir "tsx/src"))
+        (typescript "https://github.com/tree-sitter/tree-sitter-typescript" "master" "typescript/src") 
+        (tsx "https://github.com/tree-sitter/tree-sitter-typescript" "master" "tsx/src") 
+        ;; (bash     . ("https://github.com/tree-sitter/tree-sitter-bash"))
+        ;; (c        . ("https://github.com/tree-sitter/tree-sitter-c"))
+        ;; (cpp      . ("https://github.com/tree-sitter/tree-sitter-cpp"))
+        ;; (json     . ("https://github.com/tree-sitter/tree-sitter-json"))
+        ;; (html     . ("https://github.com/tree-sitter/tree-sitter-html"))
+        (css        . ("https://github.com/tree-sitter/tree-sitter-css")))) 
+
+
+;; (treesit-install-language-grammar 'typescript) 
+;; (treesit-install-language-grammar 'tsx)
+
+(dolist (lang '(python typescript tsx css))
+  (unless (treesit-language-available-p lang)
+    (treesit-install-language-grammar lang))) 
+ 
+
+        ;; haskell scheme lean rust elixir javascript typescript bash c cpp json html css
+
+;; (defun my/tab-indent-or-complete ()
+ ;;  "Indent line or trigger completion."
+ ;;  (interactive)
+ ;;  (if (or (not (boundp 'completion-at-point-functions))
+ ;;          (null (completion-at-point)))
+ ;;      (indent-for-tab-command))) 
+
+
+;; If you're using Evil
+;; (define-key evil-insert-state-map (kbd "TAB") #'my/tab-indent-or-complete)
+
+
+
+(setq major-mode-remap-alist
+      '((python-mode . python-ts-mode)
+        ;; (haskell-mode . haskell-ts-mode)
+        ;; (scheme-mode . scheme-ts-mode)
+        ;; (rust-mode . rust-ts-mode)
+        (js-mode . js-ts-mode)
+        (typescript-mode . tsx-ts-mode)
+        ;; Add more here as needed
+        ))
+
 (use-package lean4-mode
  :commands lean4-mode
  :vc (:url "https://github.com/leanprover-community/lean4-mode.git"
@@ -383,11 +443,6 @@
           (lambda ()
             (add-hook 'before-save-hook 'clang-format-buffer nil 'local)))
 
-(use-package python
-  :hook ((python-mode . highlight-indent-guides-mode)
-         (python-mode . display-line-numbers-mode) 
-         (python-mode . hs-minor-mode)))
-
 (define-key key-translation-map (kbd "ESC") (kbd "C-g"))
 
 (use-package highlight-indent-guides
@@ -405,5 +460,7 @@
     (kill-new (file-truename buffer-file-name))))
 
 (global-set-key (kbd "C-c y") 'copy-full-path-to-kill-ring)
+
+(electric-pair-mode 1)
 
 
