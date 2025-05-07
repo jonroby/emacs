@@ -70,7 +70,8 @@ Emacs can find your terminal environment and terminal
 
 
   (nano-faces)
-  (nano-theme) 
+  (nano-theme)
+
 
 
   ;;(defface nano-faded
@@ -245,6 +246,14 @@ Pressing return causes the entire block to indent. This fixes issue.
           completion-category-overrides '((file (styles partial-completion)))))
 #+end_src
 
+
+** Consult Icons
+
+#+begin_src emacs-lisp
+(use-package consult-icons
+  :after consult
+  :hook (consult-mode . consult-icons-mode))
+#+end_src
 ** Find File Go back Directory
 #+begin_src emacs-lisp
 (with-eval-after-load 'vertico
@@ -764,31 +773,89 @@ will be killed."
           (let (kill-buffer-query-functions) ; No query done when killing buffer
             (kill-buffer buf)
             (message "Killed non-existing/unreadable file buffer: %s" filename))))))
-  (message "Finished reverting buffers containing unmodified files.")) 
-#+end_src>
+  (message "Finished reverting buffers containing unmodified files."))  
+#+end_src
 
 ** Automatic parens
 #+begin_src emacs-lisp
 (electric-pair-mode 1) 
+
 #+end_src
 
-** Folders
+
+** Line number
 #+begin_src emacs-lisp
- 
+
+(global-display-line-numbers-mode 1) 
+
 #+end_src
 
 * Styles
-#+begin_src emacs-lisp
-;(set-face-attribute 'font-lock-function-name-face nil
-;                    :foreground "#88c0d0" :weight 'normal)  
 
-;; (set-face-attribute 'font-lock-string-face nil
- ;;                   :foreground "#A6E22E"  ;; Lime green (like Sublime Text)
-  ;;                  :weight 'normal)                    
+#+begin_src emacs-lisp
+(set-face-attribute 'font-lock-function-name-face nil
+                    :foreground "#B58EAE" :weight 'normal) 
+(custom-set-faces
+ '(default ((t (:foreground "#e5e9f0")))) 
+ '(font-lock-variable-name-face ((t (:foreground "#ACD7FF"))))) 
+
+(setq-default line-spacing 0.35) 
+
+(use-package rainbow-delimiters
+  :ensure t
+  :hook (prog-mode . rainbow-delimiters-mode))
+
+(custom-set-faces
+ '(rainbow-delimiters-depth-1-face ((t (:foreground "#b48ead"))))  ; ;; 81A1C1 for blue
+ '(rainbow-delimiters-depth-2-face ((t (:foreground "#a3be8c"))))  ; green
+ '(rainbow-delimiters-depth-3-face ((t (:foreground "#88c0d0"))))  ; blue
+ ;; You can continue for depth 4–9
+ ) 
+
+
+ (set-face-attribute 'default nil :height 140) 
+
+(dolist (mode '(eshell-mode-hook
+                shell-mode-hook
+                term-mode-hook
+                vterm-mode-hook
+                minibuffer-setup-hook))
+  (add-hook mode (lambda () (display-line-numbers-mode 0))))
+ 
+ 
+ 
+
 
  
-;; Base editor background
-;; (set-face-background 'default "#000000") 
+#+end_src
 
-   
-#+end_src>
+
+** Indent dots
+#+begin_src emacs-lisp
+(use-package indent-bars
+  :hook ((python-ts-mode tsx-ts-mode) . indent-bars-mode)
+  :custom
+  (indent-bars-treesit-support t))
+;; Install indent-bars if not already installed
+;; Install indent-bars if not already installed
+
+   (setq 
+
+    indent-bars-color '(highlight :face-bg t :blend .075) 
+    indent-bars-starting-column 0
+    indent-bars-pattern "."
+    indent-bars-width-frac 0.1
+    indent-bars-pad-frac 0.1
+    indent-bars-zigzag nil
+    indent-bars-highlight-current-depth nil 
+    indent-bars-prefer-character t
+    indent-bars-display-on-blank-lines t) 
+
+(defun show-treesit-node-type ()
+  "Print the Tree-sitter node type at point."
+  (interactive)
+  (message "Node type: %s" (treesit-node-type (treesit-node-at (point)))))  
+
+
+#+end_src
+(treesit-query-validate 'tsx-ts-mode) 
