@@ -19,14 +19,14 @@
   :config
   (exec-path-from-shell-initialize))
 
-(use-package mini-frame
- :ensure t) 
+  (use-package mini-frame
+   :ensure t) 
 
 
 
-(customize-set-variable 'mini-frame-resize 'fit-content)
+  (customize-set-variable 'mini-frame-resize 'fit-content)
 
-(add-to-list 'load-path "~/.emacs.d/nano-emacs") 
+  (add-to-list 'load-path "~/.emacs.d/nano-emacs") 
 
   (require 'nano)
   (require 'nano-theme-dark)
@@ -69,7 +69,7 @@
 (scroll-bar-mode -1)  ;; Disable the scrollbars on the side
 (set-fringe-mode 0)   ;; Disable side fringes (optional, for absolute minimalism)
 
-(setq frame-title-format nil) 
+  (setq frame-title-format nil) 
 (setq ns-use-proxy-icon nil)
 
 (setq ring-bell-function 'ignore)
@@ -119,31 +119,31 @@
 
 (setq org-src-preserve-indentation t)
 
-;; Vertico - Vertical completion UI
-(use-package vertico
-  :ensure t
-  :init
-  (vertico-mode 1))
+  ;; Vertico - Vertical completion UI
+  (use-package vertico
+    :ensure t
+    :init
+    (vertico-mode 1))
 
-;; Marginalia - Show annotations (like file size, buffer info)
-(use-package marginalia
-  :ensure t
-  :after vertico
-  :init
-  (marginalia-mode 1))
+  ;; Marginalia - Show annotations (like file size, buffer info)
+  (use-package marginalia
+    :ensure t
+    :after vertico
+    :init
+    (marginalia-mode 1))
 
-;; Consult - Search, M-x, switch buffers, find files, ripgrep, etc.
-(use-package consult
-  :ensure t
-  :after vertico)
+  ;; Consult - Search, M-x, switch buffers, find files, ripgrep, etc.
+  (use-package consult
+    :ensure t
+    :after vertico)
 
-;; Orderless - Advanced flexible matching
-(use-package orderless
-  :ensure t
-  :init
-  (setq completion-styles '(orderless basic)
-        completion-category-defaults nil
-        completion-category-overrides '((file (styles partial-completion)))))
+  ;; Orderless - Advanced flexible matching
+  (use-package orderless
+    :ensure t
+    :init
+    (setq completion-styles '(orderless basic)
+          completion-category-defaults nil
+          completion-category-overrides '((file (styles partial-completion)))))
 
 (with-eval-after-load 'vertico
   (define-key vertico-map (kbd "C-l") #'vertico-directory-up))
@@ -170,18 +170,18 @@
       (vertico-insert (concat (vertico--candidate) "/"))
     (vertico-exit)))
 
-;; Evil Core
-(use-package evil
-  :init
-  (setq evil-want-keybinding nil)
-  :config
-  (evil-mode 1))
+  ;; Evil Core
+  (use-package evil
+    :init
+    (setq evil-want-keybinding nil)
+    :config
+    (evil-mode 1))
 
-;; Evil Collection (extra Evil bindings for other modes)
-(use-package evil-collection
-  :after evil
-  :config
-  (evil-collection-init))
+  ;; Evil Collection (extra Evil bindings for other modes)
+  (use-package evil-collection
+    :after evil
+    :config
+    (evil-collection-init))
 
 (use-package avy
   :ensure t
@@ -211,78 +211,87 @@
   :config
   (evil-multiedit-default-keybinds))
 
-(use-package general
-  :after (evil consult)
-  :config
-  (general-evil-setup t)
+  (use-package general
+    :after (evil consult)
+    :config
+    (general-evil-setup t)
 
-  ;; Main Leader Key
-  (general-create-definer jonroby/leader-keys
-    :prefix "SPC"
-    :keymaps 'override
-    :states '(normal visual motion))
+    ;; Main Leader Key
+    (general-create-definer jonroby/leader-keys
+      :prefix "SPC"
+      :keymaps 'override
+      :states '(normal visual motion))
 
-  ;; Reserve sub-prefixes
+    ;; Reserve sub-prefixes
+    (jonroby/leader-keys
+      "e" '(:ignore t :which-key "emacs commands")
+      "w" '(:ignore t :which-key "window management")
+      "c" '(:ignore t :which-key "code folding")
+      "p" '(:ignore t :which-key "project management") 
+      "b" '(:ignore t :which-key "buffer management") 
+      "l" '(:ignore t :which-key "eglot")) 
+
+    ;; Top-level SPC bindings
+    (jonroby/leader-keys
+      "a" 'save-buffer 
+      "." 'consult-buffer
+      "/" 'find-file 
+      "s" 'consult-line
+     ) 
+
+    ;; Code folding under SPC c
+    (jonroby/leader-keys
+      "c h" 'hs-hide-block
+      "c s" 'hs-show-block)
+
+    ;; Window management under SPC w
+    (jonroby/leader-keys
+      "w j" 'split-window-below
+      "w l" 'split-window-right
+      "w d" 'delete-window)
+
+    ;; Window management under SPC w
+    (jonroby/leader-keys
+      "p s" 'project-find-regexp
+      "p f" 'project-find-file
+      "p ." 'consult-project-buffer
+      "p t" 'consult-ripgrep
+      "p p" 'project-switch-project
+      ) 
+
+    ;; Define switch-to-last-buffer function
+    (defun switch-to-last-buffer ()
+      (interactive)
+      (switch-to-buffer nil))
+
+    ;; Buffer navigation under SPC b
+    (jonroby/leader-keys
+      "b a" 'save-buffer
+      "b j" 'previous-buffer
+      "b k" 'next-buffer
+      "b l" 'switch-to-last-buffer
+      "b b" 'switch-to-buffer
+      "b d" 'kill-buffer)
+
+    ;; Emacs commands under SPC e
+    (jonroby/leader-keys
+      "e q" 'save-buffers-kill-terminal
+      "e e" 'execute-extended-command
+      "e y" 'consult-yank-pop
+      "e r" 'eval-last-sexp
+      "e i" '(lambda () (interactive) (find-file "~/.emacs.d/emacs.org"))))
+
+(setq xref-show-xrefs-function #'consult-xref
+      xref-show-definitions-function #'consult-xref) 
+
   (jonroby/leader-keys
-    "e" '(:ignore t :which-key "emacs commands")
-    "w" '(:ignore t :which-key "window management")
-    "c" '(:ignore t :which-key "code folding")
-    "p" '(:ignore t :which-key "project management") 
-    "b" '(:ignore t :which-key "buffer management")) 
-
-  ;; Top-level SPC bindings
-  (jonroby/leader-keys
-    "a" 'save-buffer 
-    "." 'consult-buffer
-    "/" 'find-file 
-    "s" 'consult-line
-   ) 
-
-  ;; Code folding under SPC c
-  (jonroby/leader-keys
-    "c h" 'hs-hide-block
-    "c s" 'hs-show-block)
-
-  ;; Window management under SPC w
-  (jonroby/leader-keys
-    "w j" 'split-window-below
-    "w l" 'split-window-right
-    "w d" 'delete-window)
-
-  ;; Window management under SPC w
-  (jonroby/leader-keys
-    "p s" 'project-find-regexp
-    "p f" 'project-find-file
-    ) 
-
-  ;; Define switch-to-last-buffer function
-  (defun switch-to-last-buffer ()
-    (interactive)
-    (switch-to-buffer nil))
-
-  ;; Buffer navigation under SPC b
-  (jonroby/leader-keys
-    "b a" 'save-buffer
-    "b j" 'previous-buffer
-    "b k" 'next-buffer
-    "b l" 'switch-to-last-buffer
-    "b b" 'switch-to-buffer
-    "b d" 'kill-buffer)
-
-  ;; Emacs commands under SPC e
-  (jonroby/leader-keys
-    "e q" 'save-buffers-kill-terminal
-    "e e" 'execute-extended-command
-    "e y" 'consult-yank-pop
-    "e r" 'eval-last-sexp
-    "e i" '(lambda () (interactive) (find-file "~/.emacs.d/emacs.org"))))
-
-(jonroby/leader-keys
-    "l" '(:ignore t :which-key "language server")
-    "l h" '(eglot-hover :which-key "hover info")
-    "l d" '(flymake-show-diagnostics-buffer :which-key "diagnostics")
-    "l g" '(xref-find-definitions :which-key "go to definition")
-    "l r" '(xref-find-references :which-key "find references"))
+      "l l" 'eglot
+      "l h" '(eglot-hover :which-key "hover info")
+      "l d" '(flymake-show-diagnostics-buffer :which-key "diagnostics")
+      "l g" '(xref-find-definitions :which-key "go to definition")
+      "l r" '(xref-find-references :which-key "find references")
+      "l a" '(eglot-code-actions :which-key "code actions")
+      "l s" '(eglot-rename :which-key "rename symbol"))
 
 (use-package which-key
   :ensure t
@@ -324,23 +333,23 @@
 (setq avy-timeout-seconds 0.3)
 (define-key evil-motion-state-map "3" 'avy-goto-char-timer)
 
-;; Evil Surround (surround text objects with parens, quotes, etc.)
-(use-package evil-surround
-  :after evil
-  :config
-  (global-evil-surround-mode 1))
+  ;; Evil Surround (surround text objects with parens, quotes, etc.)
+  (use-package evil-surround
+    :after evil
+    :config
+    (global-evil-surround-mode 1))
 
 
 
-(use-package corfu
-  :ensure t
-  :init
-  (global-corfu-mode)
-  :custom
-  (corfu-auto t)
-  (corfu-auto-prefix 1)
-  :config
-  (corfu-popupinfo-mode 1))
+  (use-package corfu
+    :ensure t
+    :init
+    (global-corfu-mode)
+    :custom
+    (corfu-auto t)
+    (corfu-auto-prefix 1)
+    :config
+    (corfu-popupinfo-mode 1))
 
 (use-package vterm
   :ensure t)
@@ -367,37 +376,37 @@
 (use-package multi-vterm
   :ensure t)
 
-(setq treesit-language-source-alist
-        '((python     . ("https://github.com/tree-sitter/tree-sitter-python"))
-        ;; (haskell  . ("https://github.com/tree-sitter/tree-sitter-haskell"))
-        ;; (scheme   . ("https://github.com/6cdh/tree-sitter-scheme"))
-        ;; (lean     . ("https://github.com/Julian/tree-sitter-lean"))
-        ;; (rust     . ("https://github.com/tree-sitter/tree-sitter-rust"))
-        ;; (elixir   . ("https://github.com/elixir-lang/tree-sitter-elixir"))
-        ;; (javascript . ("https://github.com/tree-sitter/tree-sitter-javascript"))
-        ;; (typescript . ("https://github.com/tree-sitter/tree-sitter-typescript" :subdir "typescript/src"))
-        ;; (tsx        . ("https://github.com/tree-sitter/tree-sitter-typescript" :subdir "tsx/src"))
-        (typescript "https://github.com/tree-sitter/tree-sitter-typescript" "master" "typescript/src") 
-        (tsx "https://github.com/tree-sitter/tree-sitter-typescript" "master" "tsx/src") 
-        ;; (bash     . ("https://github.com/tree-sitter/tree-sitter-bash"))
-        ;; (c        . ("https://github.com/tree-sitter/tree-sitter-c"))
-        ;; (cpp      . ("https://github.com/tree-sitter/tree-sitter-cpp"))
-        ;; (json     . ("https://github.com/tree-sitter/tree-sitter-json"))
-        ;; (html     . ("https://github.com/tree-sitter/tree-sitter-html"))
-        (css        . ("https://github.com/tree-sitter/tree-sitter-css")))) 
+      (setq treesit-language-source-alist
+          '((python     . ("https://github.com/tree-sitter/tree-sitter-python"))
+          ;; (haskell  . ("https://github.com/tree-sitter/tree-sitter-haskell"))
+          ;; (scheme   . ("https://github.com/6cdh/tree-sitter-scheme"))
+          ;; (lean     . ("https://github.com/Julian/tree-sitter-lean"))
+          ;; (rust     . ("https://github.com/tree-sitter/tree-sitter-rust"))
+          ;; (elixir   . ("https://github.com/elixir-lang/tree-sitter-elixir"))
+          ;; (javascript . ("https://github.com/tree-sitter/tree-sitter-javascript"))
+          ;; (typescript . ("https://github.com/tree-sitter/tree-sitter-typescript" :subdir "typescript/src"))
+          ;; (tsx        . ("https://github.com/tree-sitter/tree-sitter-typescript" :subdir "tsx/src"))
+          (typescript "https://github.com/tree-sitter/tree-sitter-typescript" "master" "typescript/src") 
+          (tsx "https://github.com/tree-sitter/tree-sitter-typescript" "master" "tsx/src") 
+          ;; (bash     . ("https://github.com/tree-sitter/tree-sitter-bash"))
+          ;; (c        . ("https://github.com/tree-sitter/tree-sitter-c"))
+          ;; (cpp      . ("https://github.com/tree-sitter/tree-sitter-cpp"))
+          ;; (json     . ("https://github.com/tree-sitter/tree-sitter-json"))
+          ;; (html     . ("https://github.com/tree-sitter/tree-sitter-html"))
+          (css        . ("https://github.com/tree-sitter/tree-sitter-css")))) 
 
 
-;; (treesit-install-language-grammar 'typescript) 
-;; (treesit-install-language-grammar 'tsx)
+  ;; (treesit-install-language-grammar 'typescript) 
+  ;; (treesit-install-language-grammar 'tsx)
 
-(dolist (lang '(python typescript tsx css))
-  (unless (treesit-language-available-p lang)
-    (treesit-install-language-grammar lang))) 
- 
+  (dolist (lang '(python typescript tsx css))
+    (unless (treesit-language-available-p lang)
+      (treesit-install-language-grammar lang))) 
+   
 
-        ;; haskell scheme lean rust elixir javascript typescript bash c cpp json html css
+          ;; haskell scheme lean rust elixir javascript typescript bash c cpp json html css
 
-;; (defun my/tab-indent-or-complete ()
+ ;; (defun my/tab-indent-or-complete ()
  ;;  "Indent line or trigger completion."
  ;;  (interactive)
  ;;  (if (or (not (boundp 'completion-at-point-functions))
@@ -420,17 +429,17 @@
         ;; Add more here as needed
         ))
 
-(use-package lean4-mode
- :commands lean4-mode
- :vc (:url "https://github.com/leanprover-community/lean4-mode.git"
-      :rev :last-release
-      ;; Or, if you prefer the bleeding edge version of Lean4-Mode:
-      ;; :rev :newest
-      ))
+ (use-package lean4-mode
+  :commands lean4-mode
+  :vc (:url "https://github.com/leanprover-community/lean4-mode.git"
+       :rev :last-release
+       ;; Or, if you prefer the bleeding edge version of Lean4-Mode:
+       ;; :rev :newest
+       ))
 
-(with-eval-after-load 'eglot
- (add-to-list 'eglot-server-programs
-              '(lean4-mode . ("lake" "serve"))))
+ (with-eval-after-load 'eglot
+  (add-to-list 'eglot-server-programs
+               '(lean4-mode . ("lake" "serve"))))
 
 (use-package haskell-mode
   :ensure t

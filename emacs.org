@@ -372,7 +372,8 @@ These must be grouped together unfortunately
       "w" '(:ignore t :which-key "window management")
       "c" '(:ignore t :which-key "code folding")
       "p" '(:ignore t :which-key "project management") 
-      "b" '(:ignore t :which-key "buffer management")) 
+      "b" '(:ignore t :which-key "buffer management") 
+      "l" '(:ignore t :which-key "eglot")) 
 
     ;; Top-level SPC bindings
     (jonroby/leader-keys
@@ -397,6 +398,9 @@ These must be grouped together unfortunately
     (jonroby/leader-keys
       "p s" 'project-find-regexp
       "p f" 'project-find-file
+      "p ." 'consult-project-buffer
+      "p t" 'consult-ripgrep
+      "p p" 'project-switch-project
       ) 
 
     ;; Define switch-to-last-buffer function
@@ -421,12 +425,17 @@ These must be grouped together unfortunately
       "e r" 'eval-last-sexp
       "e i" '(lambda () (interactive) (find-file "~/.emacs.d/emacs.org"))))
 
+(setq xref-show-xrefs-function #'consult-xref
+      xref-show-definitions-function #'consult-xref) 
+
   (jonroby/leader-keys
-      "l" '(:ignore t :which-key "language server")
+      "l l" 'eglot
       "l h" '(eglot-hover :which-key "hover info")
       "l d" '(flymake-show-diagnostics-buffer :which-key "diagnostics")
       "l g" '(xref-find-definitions :which-key "go to definition")
-      "l r" '(xref-find-references :which-key "find references")) 
+      "l r" '(xref-find-references :which-key "find references")
+      "l a" '(eglot-code-actions :which-key "code actions")
+      "l s" '(eglot-rename :which-key "rename symbol")) 
 #+end_src
 ** Which Key
 #+begin_src emacs-lisp
@@ -732,6 +741,32 @@ See comments (and follow them exactly) for compilation https://github.com/akermu
 (global-set-key (kbd "C-c y") 'copy-full-path-to-kill-ring)
 #+end_src
 
+** Refresh
+#+begin_src emacs-lisp
+(defun revert-all-file-buffers ()
+  "Refresh all open file buffers without confirmation.
+Buffers in modified (not yet saved) state in emacs will not be reverted. They
+will be reverted though if they were modified outside emacs.
+Buffers visiting files which do not exist any more or are no longer readable
+will be killed."
+  (interactive)
+  (dolist (buf (buffer-list))
+    (let ((filename (buffer-file-name buf)))
+      ;; Revert only buffers containing files, which are not modified;
+      ;; do not try to revert non-file buffers like *Messages*.
+      (when (and filename
+                 (not (buffer-modified-p buf)))
+        (if (file-readable-p filename)
+            ;; If the file exists and is readable, revert the buffer.
+            (with-current-buffer buf
+              (revert-buffer :ignore-auto :noconfirm :preserve-modes))
+          ;; Otherwise, kill the buffer.
+          (let (kill-buffer-query-functions) ; No query done when killing buffer
+            (kill-buffer buf)
+            (message "Killed non-existing/unreadable file buffer: %s" filename))))))
+  (message "Finished reverting buffers containing unmodified files.")) 
+#+end_src>
+
 ** Automatic parens
 #+begin_src emacs-lisp
 (electric-pair-mode 1) 
@@ -742,3 +777,18 @@ See comments (and follow them exactly) for compilation https://github.com/akermu
  
 #+end_src
 
+* Styles
+#+begin_src emacs-lisp
+;(set-face-attribute 'font-lock-function-name-face nil
+;                    :foreground "#88c0d0" :weight 'normal)  
+
+;; (set-face-attribute 'font-lock-string-face nil
+ ;;                   :foreground "#A6E22E"  ;; Lime green (like Sublime Text)
+  ;;                  :weight 'normal)                    
+
+ 
+;; Base editor background
+;; (set-face-background 'default "#000000") 
+
+   
+#+end_src>
