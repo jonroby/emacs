@@ -41,7 +41,8 @@ Emacs can find your terminal environment and terminal
 (use-package exec-path-from-shell
   :if (memq window-system '(mac ns x))
   :config
-  (exec-path-from-shell-initialize))
+  (exec-path-from-shell-initialize)
+  (exec-path-from-shell-copy-env "ANTHROPIC_API_KEY"))
 #+end_src
 
 * Nano-Emacs
@@ -391,6 +392,7 @@ These must be grouped together unfortunately
       "c" '(:ignore t :which-key "code folding")
       "p" '(:ignore t :which-key "project management") 
       "b" '(:ignore t :which-key "buffer management") 
+      "i" '(:ignore t :which-key "aider management")
       "l" '(:ignore t :which-key "eglot")) 
 
     ;; Top-level SPC bindings
@@ -400,6 +402,10 @@ These must be grouped together unfortunately
       "/" 'find-file 
       "s" 'consult-line
      ) 
+
+    ;; Code folding under SPC c
+    (jonroby/leader-keys
+      "i i" 'aidermacs-transient-menu) 
 
     ;; Code folding under SPC c
     (jonroby/leader-keys
@@ -807,7 +813,8 @@ will be killed."
 ** Vertico spacing
 #+begin_src emacs-lisp
  
-(set-face-attribute 'minibuffer-prompt nil :inherit 'default :extend t :box '(:line-width (4 . 12) :color "#1C1E28")) 
+;; (set-face-attribute 'minibuffer-prompt nil :inherit 'default :extend t :box '(:line-width (2 . 2) :color "#1C1E28")) 
+
 
 #+end_src
 
@@ -942,11 +949,42 @@ will be killed."
 
 
 #+end_src
- 
 
 
-
+* Magit
+** Magit
+#+begin_src emacs-lisp
+(use-package magit
+  :ensure t
+  :commands (magit-status magit-blame)
+  :bind (("C-x g" . magit-status)))  
 #+end_src
+
+** Evil Magit 
+#+begin_src emacs-lisp
+(use-package evil-collection
+  :after (evil magit)
+  :config
+  (evil-collection-init)) 
 #+end_src
- 
+
+* AiderMacs
+#+begin_src emacs-lisp
+(use-package aidermacs
+  :bind (("C-c a" . aidermacs-transient-menu))
+  :config
+  (setenv "ANTHROPIC_API_KEY" (getenv "ANTHROPIC_API_KEY"))
+  :custom
+  (aidermacs-use-architect-mode t)
+  (aidermacs-default-model "haiku")) 
+#+end_src
+
+
+** Ediff
+#+begin_src emacs-lisp
+(setq ediff-window-setup-function 'ediff-setup-windows-plain) 
+(setq ediff-split-window-function 'split-window-horizontally)
+
+;; (setq aidermacs-auto-ediff nil)
+
 #+end_src

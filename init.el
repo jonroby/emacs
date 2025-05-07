@@ -17,7 +17,8 @@
 (use-package exec-path-from-shell
   :if (memq window-system '(mac ns x))
   :config
-  (exec-path-from-shell-initialize))
+  (exec-path-from-shell-initialize)
+  (exec-path-from-shell-copy-env "ANTHROPIC_API_KEY"))
 
   (use-package mini-frame
    :ensure t) 
@@ -37,7 +38,8 @@
 
 
   (nano-faces)
-  (nano-theme) 
+  (nano-theme)
+
 
 
   ;;(defface nano-faded
@@ -85,8 +87,8 @@
 (visual-line-mode t)
 
 (set-face-attribute 'default nil
-                    :family "SF Mono"
-                    :height 130
+                    :family "Fira Code"
+                    :height 140
                     :weight 'normal
                     :width 'normal)
 
@@ -144,6 +146,16 @@
     (setq completion-styles '(orderless basic)
           completion-category-defaults nil
           completion-category-overrides '((file (styles partial-completion)))))
+
+(use-package all-the-icons
+  :if (display-graphic-p))
+
+(use-package all-the-icons-completion
+  :ensure t
+  :after (marginalia all-the-icons)
+  :hook (marginalia-mode . all-the-icons-completion-marginalia-setup)
+  :init
+  (all-the-icons-completion-mode))
 
 (with-eval-after-load 'vertico
   (define-key vertico-map (kbd "C-l") #'vertico-directory-up))
@@ -229,6 +241,7 @@
       "c" '(:ignore t :which-key "code folding")
       "p" '(:ignore t :which-key "project management") 
       "b" '(:ignore t :which-key "buffer management") 
+      "i" '(:ignore t :which-key "aider management")
       "l" '(:ignore t :which-key "eglot")) 
 
     ;; Top-level SPC bindings
@@ -238,6 +251,10 @@
       "/" 'find-file 
       "s" 'consult-line
      ) 
+
+    ;; Code folding under SPC c
+    (jonroby/leader-keys
+      "i i" 'aidermacs-transient-menu) 
 
     ;; Code folding under SPC c
     (jonroby/leader-keys
@@ -406,16 +423,15 @@
 
           ;; haskell scheme lean rust elixir javascript typescript bash c cpp json html css
 
- ;; (defun my/tab-indent-or-complete ()
- ;;  "Indent line or trigger completion."
- ;;  (interactive)
- ;;  (if (or (not (boundp 'completion-at-point-functions))
- ;;          (null (completion-at-point)))
- ;;      (indent-for-tab-command))) 
-
-
-;; If you're using Evil
-;; (define-key evil-insert-state-map (kbd "TAB") #'my/tab-indent-or-complete)
+(use-package jtsx
+  :ensure t
+  :mode (("\\.jsx?\\'" . jtsx-jsx-mode)
+         ("\\.tsx\\'" . jtsx-tsx-mode)
+         ("\\.ts\\'" . jtsx-typescript-mode))
+  :commands jtsx-install-treesit-language
+  :hook ((jtsx-jsx-mode . hs-minor-mode)
+         (jtsx-tsx-mode . hs-minor-mode)
+         (jtsx-typescript-mode . hs-minor-mode)))
 
 
 
@@ -470,6 +486,150 @@
 
 (global-set-key (kbd "C-c y") 'copy-full-path-to-kill-ring)
 
+(defun revert-all-file-buffers ()
+  "Refresh all open file buffers without confirmation.
+Buffers in modified (not yet saved) state in emacs will not be reverted. They
+will be reverted though if they were modified outside emacs.
+Buffers visiting files which do not exist any more or are no longer readable
+will be killed."
+  (interactive)
+  (dolist (buf (buffer-list))
+    (let ((filename (buffer-file-name buf)))
+      ;; Revert only buffers containing files, which are not modified;
+      ;; do not try to revert non-file buffers like *Messages*.
+      (when (and filename
+                 (not (buffer-modified-p buf)))
+        (if (file-readable-p filename)
+            ;; If the file exists and is readable, revert the buffer.
+            (with-current-buffer buf
+              (revert-buffer :ignore-auto :noconfirm :preserve-modes))
+          ;; Otherwise, kill the buffer.
+          (let (kill-buffer-query-functions) ; No query done when killing buffer
+            (kill-buffer buf)
+            (message "Killed non-existing/unreadable file buffer: %s" filename))))))
+  (message "Finished reverting buffers containing unmodified files."))
+
 (electric-pair-mode 1)
 
+(global-display-line-numbers-mode 1)
 
+;; (set-face-attribute 'minibuffer-prompt nil :inherit 'default :extend t :box '(:line-width (2 . 2) :color "#1C1E28"))
+
+(use-package treesit-fold
+  :load-path "~/.emacs.d/treesit-fold") 
+
+
+(defun my/tsx-string-fragment-fold-only ()
+  (when (eq major-mode 'tsx-ts-mode)
+    (setq treesit-simple-indent-rules nil) ;; avoid interference
+    (setq-local treesit-fold-range-function
+      (lambda (node)
+        (when (string= (treesit-node-type node) "string_fragment")
+          (cons (treesit-node-start node)
+                (treesit-node-end node))))))) 
+
+(add-hook 'tsx-ts-mode-hook #'treesit-fold-mode) 
+(add-hook 'tsx-ts-mode-hook #'my/tsx-string-fragment-fold-only)
+
+;; (run-with-idle-timer
+;;  1 nil
+;;  (lambda ()
+;;    (custom-set-faces
+;;     '(default ((t (:foreground "#e5e9f0"))))
+;;     ;; '(font-lock-variable-name-face ((t (:foreground "#ACD7FF"))))
+;;     '(font-lock-function-name-face ((t (:foreground "#B58EAE" :weight normal)))))))
+
+(setq-default line-spacing 0.32) 
+(set-face-attribute 'default nil :height 140)
+
+(use-package rainbow-delimiters
+  :ensure t
+  :hook (prog-mode . rainbow-delimiters-mode))
+
+(custom-set-faces
+ '(rainbow-delimiters-depth-1-face ((t (:foreground "#81A1C1"))))  ; ;; 81A1C1 for blue
+ '(rainbow-delimiters-depth-2-face ((t (:foreground "#81A1C1"))))  ; green
+ '(rainbow-delimiters-depth-3-face ((t (:foreground "#81A1C1"))))  ; blue
+;; You can continue for depth 4–9
+ )
+
+(dolist (mode '(eshell-mode-hook
+                shell-mode-hook
+                term-mode-hook
+                vterm-mode-hook
+                minibuffer-setup-hook))
+  (add-hook mode (lambda () (display-line-numbers-mode 0))))
+
+;; (use-package indent-bars
+;;   :hook ((python-ts-mode tsx-ts-mode) . indent-bars-mode)
+;;   :custom
+;;   (indent-bars-treesit-support t))
+
+;;    (setq 
+
+;;     indent-bars-color '(highlight :face-bg t :blend .075) 
+;;     indent-bars-starting-column 0
+;;     indent-bars-pattern "."
+;;     indent-bars-width-frac 0.1
+;;     indent-bars-pad-frac 0.1
+;;     indent-bars-zigzag nil
+;;     indent-bars-highlight-current-depth nil 
+;;     indent-bars-prefer-character t
+;;     indent-bars-display-on-blank-lines t)
+
+
+(defun show-treesit-node-type ()
+  "Print the Tree-sitter node type at point."
+  (interactive)
+  (message "Node type: %s" (treesit-node-type (treesit-node-at (point)))))
+
+ (use-package ligature
+  :config
+  ;; Enable ligatures in all modes
+  (ligature-set-ligatures 't '("www"))
+
+  ;; EWW-specific ligatures (typographic)
+  (ligature-set-ligatures 'eww-mode '("ff" "fi" "ffi"))
+
+  ;; Enable Fira Code ligatures in all programming modes
+  (ligature-set-ligatures 'prog-mode
+    '("**" "***" "**/" "*>" "*/" "\\\\" "\\\\\\"
+      "{-" "[]" "::" ":::" ":=" "!!" "!=" "!==" "!!." "!=="
+      "--" "---" "-->" "->" "->>" "-<" "-<<" "-~"
+      "==" "===" "==>" "=!=" "=>>" "=<<" "=/="
+      "<=" "<==" "<=>" "<=<" "<->" "<--" "<-<" "<<=" "<<-" "<<<"
+      "<>" "<$>" "<|" "<|>" "<:" "<*" "<~" "<~>" "<~~" "<+>" "</>" "<$"
+      ">=" ">>" ">>=" ">>>" ">>-" ">->" ">=>" ">:"
+      "&&" "||" "||=" "||>" "|>" "|-" "|=" "::" ":>" ":<" ";;"
+      "++" "+++" "+>" "?=" "??" "?:" "?."
+      "__" "_|_" "~@" "~=" "~>" "~-" "~~" "~~>"
+      "%%" ".=" ".-" ".." "..." "..<" ".?"
+      "##" "###" "#(" "#?" "#_" "#_(" "#{" "#[" "#:" "#=" "#!"
+      "/=" "/>" "/**" "//" "///" "/*"
+      "(*" "*)" "$>" "^=")) 
+
+  ;; Enable globally
+  (global-ligature-mode t))
+
+(use-package magit
+  :ensure t
+  :commands (magit-status magit-blame)
+  :bind (("C-x g" . magit-status)))
+
+(use-package evil-collection
+  :after (evil magit)
+  :config
+  (evil-collection-init))
+
+(use-package aidermacs
+  :bind (("C-c a" . aidermacs-transient-menu))
+  :config
+  (setenv "ANTHROPIC_API_KEY" (getenv "ANTHROPIC_API_KEY"))
+  :custom
+  (aidermacs-use-architect-mode t)
+  (aidermacs-default-model "haiku"))
+
+(setq ediff-window-setup-function 'ediff-setup-windows-plain) 
+(setq ediff-split-window-function 'split-window-horizontally)
+
+;; (setq aidermacs-auto-ediff nil)
