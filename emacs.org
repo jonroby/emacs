@@ -250,9 +250,15 @@ Pressing return causes the entire block to indent. This fixes issue.
 ** Consult Icons
 
 #+begin_src emacs-lisp
-(use-package consult-icons
-  :after consult
-  :hook (consult-mode . consult-icons-mode))
+
+(use-package all-the-icons-completion
+  :ensure t
+  :after (marginalia all-the-icons)
+  :hook (marginalia-mode . all-the-icons-completion-marginalia-setup)
+  :init
+  (all-the-icons-completion-mode)) 
+
+
 #+end_src
 ** Find File Go back Directory
 #+begin_src emacs-lisp
@@ -791,53 +797,60 @@ will be killed."
 #+end_src
 
 * Styles
-
+** Colors
 #+begin_src emacs-lisp
-(set-face-attribute 'font-lock-function-name-face nil
-                    :foreground "#B58EAE" :weight 'normal) 
-(custom-set-faces
- '(default ((t (:foreground "#e5e9f0")))) 
- '(font-lock-variable-name-face ((t (:foreground "#ACD7FF"))))) 
+ (add-hook 'after-load-theme-hook
+  (lambda ()
+    (custom-set-faces
+     '(default ((t (:foreground "#e5e9f0"))))
+     '(font-lock-variable-name-face ((t (:foreground "#ACD7FF"))))
+     '(font-lock-function-name-face ((t (:foreground "#B58EAE" :weight normal))))))) 
 
-(setq-default line-spacing 0.35) 
+(run-with-idle-timer
+ 1 nil
+ (lambda ()
+   (custom-set-faces
+    '(default ((t (:foreground "#e5e9f0"))))
+    '(font-lock-variable-name-face ((t (:foreground "#ACD7FF"))))
+    '(font-lock-function-name-face ((t (:foreground "#B58EAE" :weight normal)))))))
+#+end_src
 
+
+** Line Spacing
+#+begin_src emacs-lisp
+(setq-default line-spacing 0.32) 
+(set-face-attribute 'default nil :height 140)
+#+end_src
+
+** Rainbow delimiters
+#+begin_src emacs-lisp
 (use-package rainbow-delimiters
   :ensure t
   :hook (prog-mode . rainbow-delimiters-mode))
 
 (custom-set-faces
- '(rainbow-delimiters-depth-1-face ((t (:foreground "#b48ead"))))  ; ;; 81A1C1 for blue
- '(rainbow-delimiters-depth-2-face ((t (:foreground "#a3be8c"))))  ; green
- '(rainbow-delimiters-depth-3-face ((t (:foreground "#88c0d0"))))  ; blue
- ;; You can continue for depth 4–9
+ '(rainbow-delimiters-depth-1-face ((t (:foreground "#81A1C1"))))  ; ;; 81A1C1 for blue
+ '(rainbow-delimiters-depth-2-face ((t (:foreground "#81A1C1"))))  ; green
+ '(rainbow-delimiters-depth-3-face ((t (:foreground "#81A1C1"))))  ; blue
+;; You can continue for depth 4–9
  ) 
-
-
- (set-face-attribute 'default nil :height 140) 
-
+#+end_src
+** Global line numbers mode
+#+begin_src emacs-lisp
 (dolist (mode '(eshell-mode-hook
                 shell-mode-hook
                 term-mode-hook
                 vterm-mode-hook
                 minibuffer-setup-hook))
   (add-hook mode (lambda () (display-line-numbers-mode 0))))
- 
- 
- 
-
-
- 
 #+end_src
 
-
-** Indent dots
+** Indent bars 
 #+begin_src emacs-lisp
 (use-package indent-bars
   :hook ((python-ts-mode tsx-ts-mode) . indent-bars-mode)
   :custom
   (indent-bars-treesit-support t))
-;; Install indent-bars if not already installed
-;; Install indent-bars if not already installed
 
    (setq 
 
@@ -859,3 +872,15 @@ will be killed."
 
 #+end_src
 (treesit-query-validate 'tsx-ts-mode) 
+
+** Code folding
+#+begin_src emacs-lisp
+(add-hook 'tsx-ts-mode-hook #'hs-minor-mode) 
+
+
+(defun my-js-hs-setup ()
+  (setq-local hs-block-start-regexp "\"\\|\'\\|`")
+  (setq-local hs-block-end-regexp "\"\\|\'\\|`"))  
+
+(add-hook 'tsx-ts-mode-hook #'my-js-hs-setup) 
+#+end_src
