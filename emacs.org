@@ -1,4 +1,4 @@
-#TITLE: Emacs
+TITLE: Emacs
 #+PROPERTY: header-args :tangle init.el
 
 * Help
@@ -155,10 +155,10 @@ Wraps text like a word editor
 *** Font family
 #+begin_src emacs-lisp
 (set-face-attribute 'default nil
-                    :family "SF Mono"
-                    :height 130
+                    :family "Fira Code"
+                    :height 140
                     :weight 'normal
-                    :width 'normal)
+                    :width 'normal) 
 #+end_src
 
 ** Title Bar
@@ -247,19 +247,22 @@ Pressing return causes the entire block to indent. This fixes issue.
 #+end_src
 
 
-** Consult Icons
+**  Icons
+ 
+#+begin_src emacs-lisp
+(use-package all-the-icons
+  :if (display-graphic-p)) 
+#+end_src
 
 #+begin_src emacs-lisp
-
 (use-package all-the-icons-completion
   :ensure t
   :after (marginalia all-the-icons)
   :hook (marginalia-mode . all-the-icons-completion-marginalia-setup)
   :init
   (all-the-icons-completion-mode)) 
-
-
 #+end_src
+
 ** Find File Go back Directory
 #+begin_src emacs-lisp
 (with-eval-after-load 'vertico
@@ -652,17 +655,20 @@ See comments (and follow them exactly) for compilation https://github.com/akermu
 #+end_src
 
 ** Typescript
+
+The jtsx package is necessary for being able to indent at all 
+Also handles opening tabs quite nicely
+If you try other typescript modes with tsx, eglot will break should you want to use it 
 #+begin_src emacs-lisp
- ;; (defun my/tab-indent-or-complete ()
- ;;  "Indent line or trigger completion."
- ;;  (interactive)
- ;;  (if (or (not (boundp 'completion-at-point-functions))
- ;;          (null (completion-at-point)))
- ;;      (indent-for-tab-command))) 
-
-
-;; If you're using Evil
-;; (define-key evil-insert-state-map (kbd "TAB") #'my/tab-indent-or-complete)
+(use-package jtsx
+  :ensure t
+  :mode (("\\.jsx?\\'" . jtsx-jsx-mode)
+         ("\\.tsx\\'" . jtsx-tsx-mode)
+         ("\\.ts\\'" . jtsx-typescript-mode))
+  :commands jtsx-install-treesit-language
+  :hook ((jtsx-jsx-mode . hs-minor-mode)
+         (jtsx-tsx-mode . hs-minor-mode)
+         (jtsx-typescript-mode . hs-minor-mode))) 
 #+end_src
 
 ** Python
@@ -796,23 +802,48 @@ will be killed."
 
 #+end_src
 
+
+
+** Vertico spacing
+#+begin_src emacs-lisp
+ 
+(set-face-attribute 'minibuffer-prompt nil :inherit 'default :extend t :box '(:line-width (4 . 12) :color "#1C1E28")) 
+
+#+end_src
+
+** Code folding
+#+begin_src emacs-lisp
+(use-package treesit-fold
+  :load-path "~/.emacs.d/treesit-fold") 
+
+
+(defun my/tsx-string-fragment-fold-only ()
+  (when (eq major-mode 'tsx-ts-mode)
+    (setq treesit-simple-indent-rules nil) ;; avoid interference
+    (setq-local treesit-fold-range-function
+      (lambda (node)
+        (when (string= (treesit-node-type node) "string_fragment")
+          (cons (treesit-node-start node)
+                (treesit-node-end node))))))) 
+
+(add-hook 'tsx-ts-mode-hook #'treesit-fold-mode) 
+(add-hook 'tsx-ts-mode-hook #'my/tsx-string-fragment-fold-only) 
+
+#+end_src
+
+
+
 * Styles
 ** Colors
 #+begin_src emacs-lisp
- (add-hook 'after-load-theme-hook
-  (lambda ()
-    (custom-set-faces
-     '(default ((t (:foreground "#e5e9f0"))))
-     '(font-lock-variable-name-face ((t (:foreground "#ACD7FF"))))
-     '(font-lock-function-name-face ((t (:foreground "#B58EAE" :weight normal))))))) 
 
-(run-with-idle-timer
- 1 nil
- (lambda ()
-   (custom-set-faces
-    '(default ((t (:foreground "#e5e9f0"))))
-    '(font-lock-variable-name-face ((t (:foreground "#ACD7FF"))))
-    '(font-lock-function-name-face ((t (:foreground "#B58EAE" :weight normal)))))))
+;; (run-with-idle-timer
+;;  1 nil
+;;  (lambda ()
+;;    (custom-set-faces
+;;     '(default ((t (:foreground "#e5e9f0"))))
+;;     ;; '(font-lock-variable-name-face ((t (:foreground "#ACD7FF"))))
+;;     '(font-lock-function-name-face ((t (:foreground "#B58EAE" :weight normal)))))))
 #+end_src
 
 
@@ -820,6 +851,9 @@ will be killed."
 #+begin_src emacs-lisp
 (setq-default line-spacing 0.32) 
 (set-face-attribute 'default nil :height 140)
+
+
+ 
 #+end_src
 
 ** Rainbow delimiters
@@ -847,22 +881,23 @@ will be killed."
 
 ** Indent bars 
 #+begin_src emacs-lisp
-(use-package indent-bars
-  :hook ((python-ts-mode tsx-ts-mode) . indent-bars-mode)
-  :custom
-  (indent-bars-treesit-support t))
+;; (use-package indent-bars
+;;   :hook ((python-ts-mode tsx-ts-mode) . indent-bars-mode)
+;;   :custom
+;;   (indent-bars-treesit-support t))
 
-   (setq 
+;;    (setq 
 
-    indent-bars-color '(highlight :face-bg t :blend .075) 
-    indent-bars-starting-column 0
-    indent-bars-pattern "."
-    indent-bars-width-frac 0.1
-    indent-bars-pad-frac 0.1
-    indent-bars-zigzag nil
-    indent-bars-highlight-current-depth nil 
-    indent-bars-prefer-character t
-    indent-bars-display-on-blank-lines t) 
+;;     indent-bars-color '(highlight :face-bg t :blend .075) 
+;;     indent-bars-starting-column 0
+;;     indent-bars-pattern "."
+;;     indent-bars-width-frac 0.1
+;;     indent-bars-pad-frac 0.1
+;;     indent-bars-zigzag nil
+;;     indent-bars-highlight-current-depth nil 
+;;     indent-bars-prefer-character t
+;;     indent-bars-display-on-blank-lines t)
+
 
 (defun show-treesit-node-type ()
   "Print the Tree-sitter node type at point."
@@ -871,16 +906,47 @@ will be killed."
 
 
 #+end_src
-(treesit-query-validate 'tsx-ts-mode) 
 
-** Code folding
+** Ligatures
+
 #+begin_src emacs-lisp
-(add-hook 'tsx-ts-mode-hook #'hs-minor-mode) 
+
+ (use-package ligature
+  :config
+  ;; Enable ligatures in all modes
+  (ligature-set-ligatures 't '("www"))
+
+  ;; EWW-specific ligatures (typographic)
+  (ligature-set-ligatures 'eww-mode '("ff" "fi" "ffi"))
+
+  ;; Enable Fira Code ligatures in all programming modes
+  (ligature-set-ligatures 'prog-mode
+    '("**" "***" "**/" "*>" "*/" "\\\\" "\\\\\\"
+      "{-" "[]" "::" ":::" ":=" "!!" "!=" "!==" "!!." "!=="
+      "--" "---" "-->" "->" "->>" "-<" "-<<" "-~"
+      "==" "===" "==>" "=!=" "=>>" "=<<" "=/="
+      "<=" "<==" "<=>" "<=<" "<->" "<--" "<-<" "<<=" "<<-" "<<<"
+      "<>" "<$>" "<|" "<|>" "<:" "<*" "<~" "<~>" "<~~" "<+>" "</>" "<$"
+      ">=" ">>" ">>=" ">>>" ">>-" ">->" ">=>" ">:"
+      "&&" "||" "||=" "||>" "|>" "|-" "|=" "::" ":>" ":<" ";;"
+      "++" "+++" "+>" "?=" "??" "?:" "?."
+      "__" "_|_" "~@" "~=" "~>" "~-" "~~" "~~>"
+      "%%" ".=" ".-" ".." "..." "..<" ".?"
+      "##" "###" "#(" "#?" "#_" "#_(" "#{" "#[" "#:" "#=" "#!"
+      "/=" "/>" "/**" "//" "///" "/*"
+      "(*" "*)" "$>" "^=")) 
+
+  ;; Enable globally
+  (global-ligature-mode t))
 
 
-(defun my-js-hs-setup ()
-  (setq-local hs-block-start-regexp "\"\\|\'\\|`")
-  (setq-local hs-block-end-regexp "\"\\|\'\\|`"))  
 
-(add-hook 'tsx-ts-mode-hook #'my-js-hs-setup) 
+#+end_src
+ 
+
+
+
+#+end_src
+#+end_src
+ 
 #+end_src
