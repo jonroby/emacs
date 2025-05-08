@@ -1,11 +1,45 @@
+* DOING
+
+magit shortcut
+
+integrate eglot jump forward and back
+
+smaller font in modeline
+
+remove aider line numbers 
+aider vterm?
+
+tab inconsistency copilot and eglot
+
+consult styling
+use faded gray
+
+------------------------------------
+* TODO
+
+work on aider + copilot + eglot
+practice vim
+
+aider styling 
+
+magit styling
+
+insert cursor gets bigger
+
+buffer consistency color (blue)
+buffer file / folder color distinction
+
 Wrong number of arguments error
 
+organize emacs file
 
-Spacing on SPC p s 
+-----------------------------
+* DONE
 
-Better color scheme
 
-Styling for Find File / Buffer
 
-Project management
+
+
+
+
 

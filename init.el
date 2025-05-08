@@ -90,7 +90,10 @@
                     :family "Fira Code"
                     :height 140
                     :weight 'normal
-                    :width 'normal)
+                    :width 'normal) 
+
+
+(set-face-attribute 'variable-pitch nil :family "Fira Code")
 
 (add-to-list 'default-frame-alist '(ns-transparent-titlebar . t))
 
@@ -244,7 +247,8 @@
       "p" '(:ignore t :which-key "project management") 
       "b" '(:ignore t :which-key "buffer management") 
       "i" '(:ignore t :which-key "aider management")
-      "l" '(:ignore t :which-key "eglot")) 
+      "l" '(:ignore t :which-key "eglot"))
+ 
 
     ;; Top-level SPC bindings
     (jonroby/leader-keys
@@ -252,12 +256,15 @@
       "." 'consult-buffer
       "/" 'find-file 
       "s" 'consult-line
+      "m" 'magit
      ) 
 
     ;; Code folding under SPC c
     (jonroby/leader-keys
       "i i" 'aidermacs-transient-menu) 
 
+
+    
     ;; Code folding under SPC c
     (jonroby/leader-keys
       "c h" 'hs-hide-block
@@ -617,6 +624,8 @@ will be killed."
   ;; Enable globally
   (global-ligature-mode t))
 
+
+
 (with-eval-after-load 'avy
   (set-face-attribute 'avy-lead-face nil :background "#DA70D6")
   (set-face-attribute 'avy-lead-face-0 nil :background "#88DDFF")
@@ -644,3 +653,12 @@ will be killed."
 (setq ediff-split-window-function 'split-window-horizontally)
 
 ;; (setq aidermacs-auto-ediff nil)
+
+(use-package copilot
+  :vc (:url "https://github.com/copilot-emacs/copilot.el"
+            :rev :newest
+            :branch "main")) 
+
+(add-hook 'prog-mode-hook 'copilot-mode) 
+
+(define-key copilot-completion-map (kbd "<tab>") 'copilot-accept-completion)

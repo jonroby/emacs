@@ -404,7 +404,8 @@ These must be grouped together unfortunately
       "p" '(:ignore t :which-key "project management") 
       "b" '(:ignore t :which-key "buffer management") 
       "i" '(:ignore t :which-key "aider management")
-      "l" '(:ignore t :which-key "eglot")) 
+      "l" '(:ignore t :which-key "eglot"))
+ 
 
     ;; Top-level SPC bindings
     (jonroby/leader-keys
@@ -412,12 +413,15 @@ These must be grouped together unfortunately
       "." 'consult-buffer
       "/" 'find-file 
       "s" 'consult-line
+      "m" 'magit
      ) 
 
     ;; Code folding under SPC c
     (jonroby/leader-keys
       "i i" 'aidermacs-transient-menu) 
 
+
+    
     ;; Code folding under SPC c
     (jonroby/leader-keys
       "c h" 'hs-hide-block
@@ -941,6 +945,8 @@ SPC . -> blue
 
 #+begin_src emacs-lisp
 
+
+
  (use-package ligature
   :config
   ;; Enable ligatures in all modes
@@ -968,6 +974,7 @@ SPC . -> blue
 
   ;; Enable globally
   (global-ligature-mode t))
+#+end_src
 
 ** Cursor changing height
 #+begin_src emacs-lisp
@@ -1035,5 +1042,5 @@ SPC . -> blue
 (add-hook 'prog-mode-hook 'copilot-mode) 
 
 (define-key copilot-completion-map (kbd "<tab>") 'copilot-accept-completion) 
-(define-key copilot-completion-map (kbd "TAB") 
+ 
 #+end_src
