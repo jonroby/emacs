@@ -247,6 +247,13 @@ Pressing return causes the entire block to indent. This fixes issue.
           completion-category-overrides '((file (styles partial-completion)))))
 #+end_src
 
+** Orderless (find file)
+#+begin_src emacs-lisp
+ ;; For partial-completion
+ 
+
+ 
+#+end_src
 
 **  Icons
  
@@ -853,6 +860,18 @@ will be killed."
     '(font-lock-function-name-face ((t (:foreground "#ACD7FF" :weight normal)))))))
 #+end_src
 
+** Buffers Consistency
+SPC / -> transparent + change of font
+SPC e e -> blue
+SPC . -> blue 
+
+#+begin_src emacs-lisp
+
+(add-hook 'minibuffer-setup-hook
+         (lambda ()
+           (face-remap-add-relative 'nano-face-default :background nil))) 
+
+#+end_src
 
 ** Line Spacing
 #+begin_src emacs-lisp
@@ -957,6 +976,9 @@ will be killed."
   (set-face-attribute 'avy-lead-face-0 nil :background "#88DDFF")
   )  
 #+end_src
+
+
+
 
 * Magit
 ** Magit

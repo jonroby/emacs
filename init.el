@@ -147,6 +147,8 @@
           completion-category-defaults nil
           completion-category-overrides '((file (styles partial-completion)))))
 
+ ;; For partial-completion
+
 (use-package all-the-icons
   :if (display-graphic-p))
 
@@ -531,13 +533,17 @@ will be killed."
 (add-hook 'tsx-ts-mode-hook #'treesit-fold-mode) 
 (add-hook 'tsx-ts-mode-hook #'my/tsx-string-fragment-fold-only)
 
-;; (run-with-idle-timer
-;;  1 nil
-;;  (lambda ()
-;;    (custom-set-faces
-;;     '(default ((t (:foreground "#e5e9f0"))))
-;;     ;; '(font-lock-variable-name-face ((t (:foreground "#ACD7FF"))))
-;;     '(font-lock-function-name-face ((t (:foreground "#B58EAE" :weight normal)))))))
+(run-with-idle-timer
+ 1 nil
+ (lambda ()
+   (custom-set-faces
+    '(default ((t (:foreground "#E4F0FB")))) ;; 
+    ;; '(font-lock-variable-name-face ((t (:foreground "#B58EAE")))) 
+    '(font-lock-function-name-face ((t (:foreground "#ACD7FF" :weight normal)))))))
+
+(add-hook 'minibuffer-setup-hook
+         (lambda ()
+           (face-remap-add-relative 'nano-face-default :background nil)))
 
 (setq-default line-spacing 0.32) 
 (set-face-attribute 'default nil :height 140)
@@ -610,6 +616,11 @@ will be killed."
 
   ;; Enable globally
   (global-ligature-mode t))
+
+(with-eval-after-load 'avy
+  (set-face-attribute 'avy-lead-face nil :background "#DA70D6")
+  (set-face-attribute 'avy-lead-face-0 nil :background "#88DDFF")
+  )
 
 (use-package magit
   :ensure t
