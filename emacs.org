@@ -405,7 +405,6 @@ These must be grouped together unfortunately
       "b" '(:ignore t :which-key "buffer management") 
       "i" '(:ignore t :which-key "aider management")
       "l" '(:ignore t :which-key "eglot"))
- 
 
     ;; Top-level SPC bindings
     (jonroby/leader-keys

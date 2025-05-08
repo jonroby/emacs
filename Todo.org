@@ -1,7 +1,5 @@
 * DOING
 
-magit shortcut
-
 integrate eglot jump forward and back
 
 smaller font in modeline
@@ -36,7 +34,7 @@ organize emacs file
 -----------------------------
 * DONE
 
-
+magit shortcut
 
 
 
