@@ -160,6 +160,10 @@ Wraps text like a word editor
                     :height 140
                     :weight 'normal
                     :width 'normal) 
+
+
+(set-face-attribute 'variable-pitch nil :family "Fira Code")  
+
 #+end_src
 
 ** Title Bar
@@ -965,7 +969,10 @@ SPC . -> blue
   ;; Enable globally
   (global-ligature-mode t))
 
-
+** Cursor changing height
+#+begin_src emacs-lisp
+ 
+#+end_src
 
 #+end_src
 
@@ -1016,4 +1023,17 @@ SPC . -> blue
 
 ;; (setq aidermacs-auto-ediff nil)
 
+#+end_src
+
+* Copilot
+#+begin_src emacs-lisp
+(use-package copilot
+  :vc (:url "https://github.com/copilot-emacs/copilot.el"
+            :rev :newest
+            :branch "main")) 
+
+(add-hook 'prog-mode-hook 'copilot-mode) 
+
+(define-key copilot-completion-map (kbd "<tab>") 'copilot-accept-completion) 
+(define-key copilot-completion-map (kbd "TAB") 
 #+end_src
