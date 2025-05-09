@@ -1,9 +1,11 @@
 elpa
-auto-save-list
 projects
-.lsp*
-transient
 nano-emacs
-.DS_Store
 tree-sitter
+
+transient
+auto-save-list
+
+.DS_Store
 .aider*
+.lsp*

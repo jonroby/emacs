@@ -1041,6 +1041,9 @@ SPC . -> blue
 #+end_src
 
 * AiderMacs
+Add a .env file to home directory for Aider customizations
+Note I had issues with a .aider.conf.yml
+
 #+begin_src emacs-lisp
 (use-package aidermacs
   :bind (("C-c a" . aidermacs-transient-menu))

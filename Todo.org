@@ -28,6 +28,8 @@ buffer file / folder color distinction
 Wrong number of arguments error
 
 organize emacs file
+note dependencies
+need to install lsp or links to how for copilot
 
 -----------------------------
 * DONE
