@@ -1,17 +1,11 @@
 * DOING
 
-integrate eglot jump forward and back
-
-smaller font in modeline
-
 remove aider line numbers 
 aider vterm?
 
+integrate eglot jump forward and bac
+
 tab inconsistency copilot and eglot
-
-consult styling
-use faded gray
-
 ------------------------------------
 * TODO
 
@@ -24,7 +18,12 @@ magit styling
 
 insert cursor gets bigger
 
-buffer consistency color (blue)
+Dropdown consistency
+SPC .
+SPC /
+SPC e e
+Completions
+
 buffer file / folder color distinction
 
 Wrong number of arguments error
@@ -34,8 +33,9 @@ organize emacs file
 -----------------------------
 * DONE
 
-magit shortcut
-
+DONE: magit shortcut
+CAN'T: smaller font in modeline
+DONE consult styling
 
 
 

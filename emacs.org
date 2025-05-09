@@ -251,6 +251,8 @@ Pressing return causes the entire block to indent. This fixes issue.
           completion-category-overrides '((file (styles partial-completion)))))
 #+end_src
 
+
+
 ** Orderless (find file)
 #+begin_src emacs-lisp
  ;; For partial-completion
@@ -902,6 +904,22 @@ SPC . -> blue
 ;; You can continue for depth 4–9
  ) 
 #+end_src
+
+
+** Styling for dropdown and completion
+#+begin_src emacs-lisp
+ (set-face-attribute 'corfu-current nil
+  :background "#252934"   ;; your desired highlight background
+  ;; :foreground "#72a4ff"   ;; optional: selected text color
+  :weight 'bold) 
+
+(set-face-attribute 'completions-common-part nil
+  :foreground "#72a4ff"
+  :weight 'bold) 
+#+end_src
+
+
+
 ** Global line numbers mode
 #+begin_src emacs-lisp
 (dolist (mode '(eshell-mode-hook
@@ -939,6 +957,8 @@ SPC . -> blue
 
 
 #+end_src
+
+
 
 ** Ligatures
 

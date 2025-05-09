@@ -248,7 +248,6 @@
       "b" '(:ignore t :which-key "buffer management") 
       "i" '(:ignore t :which-key "aider management")
       "l" '(:ignore t :which-key "eglot"))
- 
 
     ;; Top-level SPC bindings
     (jonroby/leader-keys
@@ -565,6 +564,15 @@ will be killed."
  '(rainbow-delimiters-depth-3-face ((t (:foreground "#81A1C1"))))  ; blue
 ;; You can continue for depth 4–9
  )
+
+ (set-face-attribute 'corfu-current nil
+  :background "#252934"   ;; your desired highlight background
+  ;; :foreground "#72a4ff"   ;; optional: selected text color
+  :weight 'bold) 
+
+(set-face-attribute 'completions-common-part nil
+  :foreground "#72a4ff"
+  :weight 'bold)
 
 (dolist (mode '(eshell-mode-hook
                 shell-mode-hook
