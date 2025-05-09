@@ -1,9 +1,5 @@
 * DOING
 
-
-
-integrate eglot jump forward and bac
-
 tab inconsistency copilot and eglot
 ------------------------------------
 * TODO
@@ -12,9 +8,11 @@ work on aider + copilot + eglot
 practice vim
 
 aider styling 
+aider navigation
 aider light green vterm color?
 
 magit styling
+magit navigation
 
 insert cursor gets bigger
 
@@ -22,7 +20,7 @@ Dropdown consistency
 SPC .
 SPC /
 SPC e e
-Completions
+Completion color
 
 buffer file / folder color distinction
 
@@ -38,7 +36,7 @@ CAN'T: smaller font in modeline
 DONE consult styling
 DONE remove aider line numbers 
 DONE aider vterm
-
+DONE integrate eglot jump forward and bac
 
 
 

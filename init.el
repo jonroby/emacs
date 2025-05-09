@@ -298,6 +298,7 @@
       "b b" 'switch-to-buffer
       "b d" 'kill-buffer)
 
+
     ;; Emacs commands under SPC e
     (jonroby/leader-keys
       "e q" 'save-buffers-kill-terminal
@@ -316,7 +317,9 @@
       "l g" '(xref-find-definitions :which-key "go to definition")
       "l r" '(xref-find-references :which-key "find references")
       "l a" '(eglot-code-actions :which-key "code actions")
-      "l s" '(eglot-rename :which-key "rename symbol"))
+      "l s" '(eglot-rename :which-key "rename symbol")
+      "l j" '(xref-find-definitions :which-key "jump to definition (consult)")
+      "l k" '(xref-pop-marker-stack :which-key "jump back"))
 
 (use-package which-key
   :ensure t
