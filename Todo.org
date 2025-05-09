@@ -1,11 +1,12 @@
 * DOING
 
-tab inconsistency copilot and eglot
+
 ------------------------------------
 * TODO
 
+
 work on aider + copilot + eglot
-practice vim
+vim
 
 aider styling 
 aider navigation
@@ -37,7 +38,4 @@ DONE consult styling
 DONE remove aider line numbers 
 DONE aider vterm
 DONE integrate eglot jump forward and bac
-
-
-
-
+DONE tab for copilot, enter for eglot 
