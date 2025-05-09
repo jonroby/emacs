@@ -613,7 +613,14 @@ See comments (and follow them exactly) for compilation https://github.com/akermu
   :ensure t)
 #+end_src
 
-**** Send command to vterm
+*** Vterm Colors
+#+begin_src emacs-lisp
+;; (set-face-attribute 'vterm-color-green nil
+;;   :foreground "#58D4BB")
+
+#+end_src
+
+*** Send command to vterm
 #+begin_src emacs-lisp
 (defun my/vterm-execute-current-line ()
   "Insert text of current line in vterm and execute."
@@ -1041,6 +1048,10 @@ SPC . -> blue
   (aidermacs-default-model "haiku")) 
 #+end_src
 
+** Aidermacs Vterm
+#+begin_src emacs-lisp
+(setq aidermacs-backend 'vterm)
+#+end_src
 
 ** Ediff
 #+begin_src emacs-lisp

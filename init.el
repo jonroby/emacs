@@ -379,6 +379,9 @@
 (use-package vterm
   :ensure t)
 
+;; (set-face-attribute 'vterm-color-green nil
+;;   :foreground "#58D4BB")
+
 (defun my/vterm-execute-current-line ()
   "Insert text of current line in vterm and execute."
   (interactive)
@@ -656,6 +659,8 @@ will be killed."
   :custom
   (aidermacs-use-architect-mode t)
   (aidermacs-default-model "haiku"))
+
+(setq aidermacs-backend 'vterm)
 
 (setq ediff-window-setup-function 'ediff-setup-windows-plain) 
 (setq ediff-split-window-function 'split-window-horizontally)

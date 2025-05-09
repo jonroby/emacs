@@ -1,7 +1,6 @@
 * DOING
 
-remove aider line numbers 
-aider vterm?
+
 
 integrate eglot jump forward and bac
 
@@ -13,6 +12,7 @@ work on aider + copilot + eglot
 practice vim
 
 aider styling 
+aider light green vterm color?
 
 magit styling
 
@@ -36,6 +36,8 @@ organize emacs file
 DONE: magit shortcut
 CAN'T: smaller font in modeline
 DONE consult styling
+DONE remove aider line numbers 
+DONE aider vterm
 
 
 

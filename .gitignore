@@ -6,3 +6,4 @@ transient
 nano-emacs
 .DS_Store
 tree-sitter
+.aider*
